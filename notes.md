@@ -79,6 +79,7 @@ You are a software engineer tasked with implementing the feature described in th
 3. Import/export not required
 4. There are no specific analytics or event tracking platforms required
 5. Let's support dark mode from the start.
+<<<<<<< Updated upstream:notes.md
 
 ### Dealing with Training Cutoff Dates
 
@@ -89,3 +90,5 @@ For example - `#fetch URL` or mode completely:-
 ```
 install tailwind css in this project. #fetch https://tailwindcss.com/docs/framework-guides/astro. Follow the instructions exactly.
 ```
+=======
+>>>>>>> Stashed changes:notes
