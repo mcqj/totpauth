@@ -45,7 +45,7 @@ export function generateTotp(secret: string, period = 30, digits = 6): string {
   const hmacHex = hmac.toString(CryptoJS.enc.Hex);
   const hmacBytes = [];
   for (let i = 0; i < hmacHex.length; i += 2) {
-    hmacBytes.push(parseInt(hmacHex.substr(i, 2), 16));
+    hmacBytes.push(parseInt(hmacHex.substring(i, i + 2), 16));
   }
   // Dynamic truncation
   const offset = hmacBytes[19] & 0xf;
