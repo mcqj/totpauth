@@ -34,10 +34,10 @@ Can you help me to create copilot instructions for a react-native expo project. 
 - Don't import React and don't use React.FC. We are using React 19
 
 ### Prompt for creating PRDs
-I am going to have our Product Managers create some product requirements documents. So, that we can have consistency and great practices, I would like you to suggest the contents of the file prd-instructions.md that contains generalized instructions for our product requirements documents.
+I am going to have our Product Managers create some product requirements documents. So that we can have consistency and great practices, I would like you to suggest the contents of the file prd-instructions.md that contains generalized instructions for our product requirements documents.
 
 ### Prompt for Creating Mock-ups
-I am going to ask a ui designer to create mock ups for our product. So, that we can have consistency and follow great practices, I would like you to suggest the contents of the file mockup-instructions.md that contains generalized instructions for our ui mockups. The mockups should be created using html, css and Javascript only. For each screen mockup, the html, css and JavaScript should be contained in a single file. mockup-instructions.md will be saved to the .github project folder.
+I am going to ask a ui designer to create mock ups for our product. So that we can have consistency and follow great practices, I would like you to suggest the contents of the file mockup-instructions.md that contains generalized instructions for our ui mockups. The mockups should be created using html, css and Javascript only. For each screen mockup, the html, css and JavaScript should be contained in a single file. mockup-instructions.md will be saved to the .github project folder.
 
 ### Prompt to create a auth product
 Can you create a product requirements document for a product that will generate TOTP codes for a user to help them to login to applications that  use 2-factor authentication based on TOTP. The application should allow the user to add credentials for multiple applications. When an applications is being added, it will display a QR code and the user will used their device's camera to scan and decode the QR code to initialize the TOTP generator for that application.

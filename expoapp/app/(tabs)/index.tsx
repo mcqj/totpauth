@@ -9,9 +9,9 @@ export default function HomeScreen() {
       <Text style={{ fontSize: 18, marginBottom: 8 }}>Step 1: Try it</Text>
       <Text style={{ marginBottom: 8 }}>Edit app/(tabs)/index.tsx to see changes.</Text>
       <Text style={{ fontSize: 18, marginBottom: 8 }}>Step 2: Explore</Text>
-      <Text style={{ marginBottom: 8 }}>Tap the Explore tab to learn more about what's included in this starter app.</Text>
+      <Text style={{ marginBottom: 8 }}>Tap the Explore tab to learn more about what&apos;s included in this starter app.</Text>
       <Text style={{ fontSize: 18, marginBottom: 8 }}>Step 3: Get a fresh start</Text>
-      <Text style={{ marginBottom: 8 }}>When you're ready, run npm run reset-project to get a fresh app directory.</Text>
+      <Text style={{ marginBottom: 8 }}>When you&apos;re ready, run npm run reset-project to get a fresh app directory.</Text>
       <Button title="Add Credential (Scan QR)" onPress={() => router.push('/add-credential')} />
     </View>
   );

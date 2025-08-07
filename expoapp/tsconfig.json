@@ -5,7 +5,9 @@
     "baseUrl": "./",
     "paths": {
       "@components/*": ["./components/*"],
-      "@utils/*": ["./utils/*"]
+      "@constants/*": ["./constants/*"],
+      "@utils/*": ["./utils/*"],
+      "@hooks/*": ["./hooks/*"],
     }
   },
   "include": [

@@ -56,6 +56,5 @@ export function generateTotp(secret: string, period = 30, digits = 6): string {
     ((hmacBytes[offset + 2] & 0xff) << 8) |
     (hmacBytes[offset + 3] & 0xff);
   const otp = (binCode % Math.pow(10, digits)).toString().padStart(digits, '0');
-  console.log('[TOTP] OTP:', otp);
   return otp;
 }
