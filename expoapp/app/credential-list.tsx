@@ -114,7 +114,6 @@ export default function CredentialListScreen() {
           )}
         />
       )}
-      <Button title="Refresh" onPress={fetchCredentials} />
     </View>
   );
 }
