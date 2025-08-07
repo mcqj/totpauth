@@ -32,14 +32,13 @@ export function generateTotp(secret: string, period = 30, digits = 6): string {
   const key = CryptoJS.lib.WordArray.create(keyBytes);
   // Time counter
   const counter = Math.floor(Date.now() / 1000 / period);
-  console.log('[TOTP] Counter:', counter);
-  console.log('[TOTP] Key bytes:', keyBytes);
+
+
   // Big-endian encoding (RFC 6238)
   const counterBytes = new Array(8).fill(0);
   for (let i = 7; i >= 0; i--) {
     counterBytes[i] = (counter >> (8 * i)) & 0xff;
   }
-  console.log('[TOTP] Counter bytes:', counterBytes);
   const counterWordArray = CryptoJS.lib.WordArray.create(counterBytes, 8);
   // HMAC-SHA1
   const hmac = CryptoJS.HmacSHA1(counterWordArray, key);
