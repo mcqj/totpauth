@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
+import { View, Text, TextInput, Button, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
+import { useToast } from '../contexts/ToastContext';
 
 type Props = {
   onSave: (payload: { accountName: string; issuer?: string; secret: string }) => Promise<void> | void;
@@ -10,6 +11,8 @@ export default function ManualEntry({ onSave, onCancel }: Props) {
   const [manualAccountName, setManualAccountName] = useState('');
   const [manualIssuer, setManualIssuer] = useState('');
   const [manualSecret, setManualSecret] = useState('');
+
+  const { show } = useToast();
 
   return (
     <KeyboardAvoidingView
@@ -42,7 +45,7 @@ export default function ManualEntry({ onSave, onCancel }: Props) {
           title="Save Manual Entry"
           onPress={async () => {
             if (!manualAccountName || !manualSecret) {
-              Alert.alert('Missing Fields', 'Account name and secret are required.');
+              show('Account name and secret are required.', { type: 'error' });
               return;
             }
             try {
@@ -51,7 +54,7 @@ export default function ManualEntry({ onSave, onCancel }: Props) {
               setManualIssuer('');
               setManualSecret('');
             } catch (e) {
-              Alert.alert('Error', `${e instanceof Error ? e.message : String(e)}`);
+              show(`${e instanceof Error ? e.message : String(e)}`, { type: 'error' });
             }
           }}
         />

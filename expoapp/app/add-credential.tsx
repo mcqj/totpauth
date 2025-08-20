@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { View, Text, Button, Alert } from 'react-native';
+import { View, Text, Button } from 'react-native';
+import { useToast } from '../contexts/ToastContext';
 import ManualEntry from '../components/ManualEntry';
 import CameraScanner from '../components/CameraScanner';
 import { parseTotpUri } from '../utils/parseTotpUri';
-import * as SecureStore from 'expo-secure-store';
+import { useCredentialsContext } from '../contexts/CredentialsContext';
 export default function AddCredentialScreen() {
   const [scanned, setScanned] = useState(false);
   const [qrData, setQrData] = useState<string | null>(null);
@@ -18,6 +19,9 @@ export default function AddCredentialScreen() {
       setQrData(data);
     }
   };
+
+  const { add } = useCredentialsContext();
+  const { show } = useToast();
 
   return (
     <View style={{ flex: 1 }}>
@@ -34,28 +38,15 @@ export default function AddCredentialScreen() {
       ) : manualMode ? (
         <ManualEntry
           onCancel={() => setManualMode(false)}
-          onSave={async ({ accountName, issuer, secret }) => {
-            try {
-              // Sanitize key: only alphanumeric, '.', '-', '_'
-              const safeAccountName = accountName.replace(/[^a-zA-Z0-9._-]/g, '_');
-              const key = `totp_${safeAccountName}`;
-              await SecureStore.setItemAsync(key, JSON.stringify({ accountName, issuer, secret }));
-              // Update key list
-              const keysRaw = await SecureStore.getItemAsync('totp_keys');
-              let keys: string[] = [];
-              if (keysRaw) {
-                try { keys = JSON.parse(keysRaw); } catch {}
+            onSave={async ({ accountName, issuer, secret }) => {
+              try {
+                await add({ accountName, issuer, secret });
+                show('Manual credential saved securely.', { type: 'success' });
+                setManualMode(false);
+              } catch (e) {
+                show(`Failed to save credential: ${e instanceof Error ? e.message : String(e)}`, { type: 'error' });
               }
-              if (!keys.includes(key)) {
-                keys.push(key);
-                await SecureStore.setItemAsync('totp_keys', JSON.stringify(keys));
-              }
-              Alert.alert('Saved', 'Manual credential saved securely.');
-              setManualMode(false);
-            } catch (e) {
-              Alert.alert('Error', `Failed to save credential: ${e instanceof Error ? e.message : String(e)}`);
-            }
-          }}
+            }}
         />
       ) : (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -71,26 +62,13 @@ export default function AddCredentialScreen() {
                 </View>
               );
             }
-            const handleSave = async () => {
+                const handleSave = async () => {
               if (!parsed) return;
-              try {
-                // Sanitize key: only alphanumeric, '.', '-', '_'
-                const safeAccountName = parsed.accountName.replace(/[^a-zA-Z0-9._-]/g, '_');
-                const key = `totp_${safeAccountName}`;
-                await SecureStore.setItemAsync(key, JSON.stringify(parsed));
-                // Update key list
-                const keysRaw = await SecureStore.getItemAsync('totp_keys');
-                let keys: string[] = [];
-                if (keysRaw) {
-                  try { keys = JSON.parse(keysRaw); } catch {}
-                }
-                if (!keys.includes(key)) {
-                  keys.push(key);
-                  await SecureStore.setItemAsync('totp_keys', JSON.stringify(keys));
-                }
-                Alert.alert('Saved', 'Credential saved securely.');
+                try {
+                await add(parsed as any);
+                show('Credential saved securely.', { type: 'success' });
               } catch (e) {
-                Alert.alert('Error', `Failed to save credential: ${e instanceof Error ? e.message : String(e)}`);
+                show(`Failed to save credential: ${e instanceof Error ? e.message : String(e)}`, { type: 'error' });
               }
             };
             return (
