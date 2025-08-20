@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode, useState, useCallback, useRef } from 'react';
+import { createContext, useContext, ReactNode, useState, useCallback, useRef } from 'react';
 import { View, Text, Animated, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 
 type ToastOptions = { type?: 'success' | 'error' | 'info'; duration?: number };

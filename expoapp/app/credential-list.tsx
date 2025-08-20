@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { useFocusEffect } from 'expo-router';
+import { useState, useCallback } from 'react';
+import { useFocusEffect, useRouter, Stack } from 'expo-router';
 import { View, Text, FlatList, Pressable } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
-import { useRouter, Stack } from 'expo-router';
 
 import { useCredentialsContext } from '../contexts/CredentialsContext';
 import ConfirmModal from '../components/ConfirmModal';
 import { useToast } from '../contexts/ToastContext';
-import { Credential } from '../types/credential';
 import CredentialCard from '../components/CredentialCard';
 
 export default function CredentialListScreen() {
@@ -17,7 +15,7 @@ export default function CredentialListScreen() {
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       reload();
     }, [reload])
   );
@@ -30,7 +28,7 @@ export default function CredentialListScreen() {
     try {
       await remove(key);
       show('Credential deleted', { type: 'success' });
-    } catch (e) {
+    } catch {
       show('Failed to delete credential.', { type: 'error' });
     }
   };

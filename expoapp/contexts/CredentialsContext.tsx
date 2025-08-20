@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode, useEffect, useState, useCallback } from 'react';
+import { createContext, useContext, ReactNode, useEffect, useState, useCallback } from 'react';
 import useCredentials from '../hooks/useCredentials';
 import { Credential } from '../types/credential';
 

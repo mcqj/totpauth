@@ -1,4 +1,3 @@
-import React from 'react';
 import { Modal, View, Text, Pressable, StyleSheet } from 'react-native';
 
 type Props = {
