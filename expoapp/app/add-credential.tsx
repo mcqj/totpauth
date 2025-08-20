@@ -1,10 +1,9 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { View, Text, Button, Alert, TextInput, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
-import { CameraView, useCameraPermissions } from 'expo-camera';
+import CameraScanner from '../components/CameraScanner';
 import { parseTotpUri } from '../utils/parseTotpUri';
 import * as SecureStore from 'expo-secure-store';
 export default function AddCredentialScreen() {
-  const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [qrData, setQrData] = useState<string | null>(null);
   const [manualMode, setManualMode] = useState(false);
@@ -12,29 +11,12 @@ export default function AddCredentialScreen() {
   const [manualIssuer, setManualIssuer] = useState('');
   const [manualSecret, setManualSecret] = useState('');
   const [showCamera, setShowCamera] = useState(false);
-  const cameraRef = useRef(null);
-
   const handleBarCodeScanned = ({ data }: { data: string }) => {
     if (!scanned) {
       setScanned(true);
       setQrData(data);
     }
   };
-
-  // Only show camera permission UI if camera is requested
-  if (showCamera) {
-    if (!permission) {
-      return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><Text>Requesting camera permission...</Text></View>;
-    }
-    if (!permission.granted) {
-      return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text>Camera access denied. Please enter credential manually.</Text>
-          <Button title="Grant Camera Permission" onPress={requestPermission} />
-        </View>
-      );
-    }
-  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -47,17 +29,7 @@ export default function AddCredentialScreen() {
           </View>
         </View>
       ) : showCamera && !scanned ? (
-        <>
-          <CameraView
-            ref={cameraRef}
-            style={{ flex: 1, margin: 16 }}
-            facing="back"
-            barcodeScannerSettings={{
-              barcodeTypes: ['qr'],
-            }}
-            onBarcodeScanned={({ data }) => handleBarCodeScanned({ data })}
-          />
-        </>
+        <CameraScanner onScanned={(d) => handleBarCodeScanned({ data: d })} onCancel={() => setShowCamera(false)} />
       ) : manualMode ? (
         <KeyboardAvoidingView
           style={{ flex: 1 }}
