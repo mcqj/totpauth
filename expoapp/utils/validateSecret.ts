@@ -10,7 +10,7 @@ export function normalizeSecret(raw: string): string {
 }
 
 function base32Regex(secret: string) {
-  return /^[A-Z2-7]+=*$/;
+  return /^[A-Z2-7]+=*$/.test(secret);
 }
 
 /** Try a simple Base32 decode; returns null on failure. */
