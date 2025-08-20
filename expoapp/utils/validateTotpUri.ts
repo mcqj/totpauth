@@ -45,5 +45,4 @@ export function validateTotpUri(uri: string): TotpValidationResult {
 
   return { parsed, valid: errors.length === 0, errors };
 
-  return { parsed, valid: errors.length === 0, errors };
 }
