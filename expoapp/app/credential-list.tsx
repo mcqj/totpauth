@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useFocusEffect } from 'expo-router';
-import { View, Text, FlatList, Button, Alert, Pressable } from 'react-native';
+import { View, Text, FlatList, Alert, Pressable } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import { useRouter, Stack } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 
@@ -34,7 +35,19 @@ function CredentialCard({ credential, onDelete }: { credential: Credential; onDe
         <Text>Issuer: {credential.issuer || 'N/A'}</Text>
         <Text>Code: <Text style={{ fontFamily: 'monospace', fontSize: 18 }}>{code}</Text> <Text style={{ color: '#888' }}>({timeLeft}s)</Text></Text>
       </View>
-      <Button title="Delete" color="#d00" onPress={onDelete} accessibilityLabel={`Delete ${credential.accountName}`} />
+      <Pressable
+        onPress={onDelete}
+        accessibilityLabel={`Delete ${credential.accountName}`}
+        style={({ pressed }) => [{
+          padding: 8,
+          borderRadius: 20,
+          backgroundColor: pressed ? '#eee' : 'transparent',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }]}
+      >
+        <FontAwesome name="trash" size={20} color="#888" />
+      </Pressable>
     </View>
   );
 }

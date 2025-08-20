@@ -11,6 +11,7 @@ export default function AddCredentialScreen() {
   const [manualAccountName, setManualAccountName] = useState('');
   const [manualIssuer, setManualIssuer] = useState('');
   const [manualSecret, setManualSecret] = useState('');
+  const [showCamera, setShowCamera] = useState(false);
   const cameraRef = useRef(null);
 
   const handleBarCodeScanned = ({ data }: { data: string }) => {
@@ -20,22 +21,32 @@ export default function AddCredentialScreen() {
     }
   };
 
-  if (!permission) {
-    return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><Text>Requesting camera permission...</Text></View>;
-  }
-  if (!permission.granted) {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Camera access denied. Please enter credential manually.</Text>
-        <Button title="Grant Camera Permission" onPress={requestPermission} />
-      </View>
-    );
+  // Only show camera permission UI if camera is requested
+  if (showCamera) {
+    if (!permission) {
+      return <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><Text>Requesting camera permission...</Text></View>;
+    }
+    if (!permission.granted) {
+      return (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Text>Camera access denied. Please enter credential manually.</Text>
+          <Button title="Grant Camera Permission" onPress={requestPermission} />
+        </View>
+      );
+    }
   }
 
   return (
     <View style={{ flex: 1 }}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginTop: 16 }}>Scan QR Code to Add Credential</Text>
-      {!scanned && !manualMode ? (
+      <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginTop: 16 }}>Add Credential</Text>
+      {!showCamera && !manualMode ? (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Button title="Scan QR Code" onPress={() => setShowCamera(true)} />
+          <View style={{ marginTop: 16 }}>
+            <Button title="Enter Manually" onPress={() => setManualMode(true)} />
+          </View>
+        </View>
+      ) : showCamera && !scanned ? (
         <>
           <CameraView
             ref={cameraRef}
@@ -46,9 +57,6 @@ export default function AddCredentialScreen() {
             }}
             onBarcodeScanned={({ data }) => handleBarCodeScanned({ data })}
           />
-          <View style={{ alignItems: 'center', marginBottom: 16 }}>
-            <Button title="Enter Manually" onPress={() => setManualMode(true)} />
-          </View>
         </>
       ) : manualMode ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -111,7 +119,6 @@ export default function AddCredentialScreen() {
               }
             }}
           />
-          <Button title="Back to Scan" onPress={() => setManualMode(false)} />
         </View>
       ) : (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -123,7 +130,7 @@ export default function AddCredentialScreen() {
               return (
                 <View style={{ marginBottom: 16, width: '100%', alignItems: 'center' }}>
                   <Text style={{ color: 'red', marginBottom: 16 }}>Invalid TOTP QR code. Please try again or enter manually.</Text>
-                  <Button title="Enter Manually" onPress={() => setManualMode(true)} />
+                  <Button title="Enter Manually" onPress={() => { setManualMode(true); setShowCamera(false); }} />
                 </View>
               );
             }
@@ -158,7 +165,6 @@ export default function AddCredentialScreen() {
               </View>
             );
           })()}
-          <Button title="Scan Again" onPress={() => { setScanned(false); setQrData(null); }} />
         </View>
       )}
     </View>
