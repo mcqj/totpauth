@@ -1,12 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
-
-export type Credential = {
-  accountName: string;
-  issuer?: string;
-  secret: string;
-  _key?: string;
-};
+import { Credential } from '../types/credential';
 
 const KEYS_STORE = 'totp_keys';
 
