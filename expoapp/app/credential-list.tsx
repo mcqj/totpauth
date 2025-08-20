@@ -1,5 +1,7 @@
-import { useEffect, useState } from 'react';
-import { View, Text, FlatList, Button, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { useFocusEffect } from 'expo-router';
+import { View, Text, FlatList, Button, Alert, Pressable } from 'react-native';
+import { useRouter, Stack } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 
 import { generateTotp } from '../utils/generateTotp';
@@ -40,6 +42,7 @@ function CredentialCard({ credential, onDelete }: { credential: Credential; onDe
 export default function CredentialListScreen() {
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const fetchCredentials = async () => {
     setLoading(true);
@@ -71,6 +74,12 @@ export default function CredentialListScreen() {
     fetchCredentials();
   }, []);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchCredentials();
+    }, [])
+  );
+
   const handleDelete = async (key: string) => {
     Alert.alert('Delete Credential', 'Are you sure you want to delete this credential?', [
       { text: 'Cancel', style: 'cancel' },
@@ -96,12 +105,25 @@ export default function CredentialListScreen() {
   };
 
   return (
-    <View style={{ flex: 1, padding: 16 }}>
-      <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 16 }}>Saved Credentials</Text>
+    <View className="flex-1 bg-white">
+      <Stack.Screen
+        options={{
+          title: 'Credentials',
+          headerRight: () => (
+            <Pressable
+              onPress={() => router.push('/add-credential')}
+              accessibilityLabel="Add Credential"
+              className="mr-4"
+            >
+              <Text className="text-2xl text-blue-600 font-bold">＋</Text>
+            </Pressable>
+          ),
+        }}
+      />
       {loading ? (
-        <Text>Loading...</Text>
+        <Text className="text-center mt-8">Loading...</Text>
       ) : credentials.length === 0 ? (
-        <Text>No credentials saved yet.</Text>
+        <Text className="text-center mt-8">No credentials saved.</Text>
       ) : (
         <FlatList
           data={credentials}
@@ -109,9 +131,11 @@ export default function CredentialListScreen() {
           renderItem={({ item }) => (
             <CredentialCard
               credential={item}
-              onDelete={() => handleDelete(item._key!)}
+              onDelete={() => handleDelete(item._key || '')}
             />
           )}
+          refreshing={loading}
+          onRefresh={fetchCredentials}
         />
       )}
     </View>
