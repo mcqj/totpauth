@@ -41,13 +41,13 @@ export default function CredentialListScreen() {
       <Stack.Screen
         options={{
           title: 'Credentials',
-          headerRight: () => (
+            headerRight: () => (
             <Pressable
               onPress={() => router.push('/add-credential')}
               accessibilityLabel="Add Credential"
               className="mr-4"
             >
-              <Text className="text-2xl text-blue-600 font-bold">＋</Text>
+              <FontAwesome name="plus" size={28} color="#2563EB" />
             </Pressable>
           ),
         }}
