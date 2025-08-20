@@ -3,8 +3,8 @@ import { useFocusEffect } from 'expo-router';
 import { View, Text, FlatList, Alert, Pressable } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useRouter, Stack } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
 
+import useCredentials from '../hooks/useCredentials';
 import { generateTotp } from '../utils/generateTotp';
 
 export type Credential = {
@@ -53,44 +53,13 @@ function CredentialCard({ credential, onDelete }: { credential: Credential; onDe
 }
 
 export default function CredentialListScreen() {
-  const [credentials, setCredentials] = useState<Credential[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { credentials, loading, remove, reload } = useCredentials();
   const router = useRouter();
-
-  const fetchCredentials = async () => {
-    setLoading(true);
-    try {
-      const keysRaw = await SecureStore.getItemAsync('totp_keys');
-      let keys: string[] = [];
-      if (keysRaw) {
-        try { keys = JSON.parse(keysRaw); } catch {}
-      }
-      const items = await Promise.all(
-        keys.map(async (key: string) => {
-          const value = await SecureStore.getItemAsync(key);
-          if (!value) return null;
-          try {
-            return { ...JSON.parse(value), _key: key } as Credential;
-          } catch {
-            return null;
-          }
-        })
-      );
-      setCredentials(items.filter(Boolean) as Credential[]);
-    } catch (e) {
-      Alert.alert('Error', 'Failed to load credentials.');
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchCredentials();
-  }, []);
 
   useFocusEffect(
     React.useCallback(() => {
-      fetchCredentials();
-    }, [])
+      reload();
+    }, [reload])
   );
 
   const handleDelete = async (key: string) => {
@@ -99,16 +68,7 @@ export default function CredentialListScreen() {
       {
         text: 'Delete', style: 'destructive', onPress: async () => {
           try {
-            await SecureStore.deleteItemAsync(key);
-            // Update key list
-            const keysRaw = await SecureStore.getItemAsync('totp_keys');
-            let keys: string[] = [];
-            if (keysRaw) {
-              try { keys = JSON.parse(keysRaw); } catch {}
-            }
-            keys = keys.filter((k) => k !== key);
-            await SecureStore.setItemAsync('totp_keys', JSON.stringify(keys));
-            fetchCredentials();
+            await remove(key);
           } catch (e) {
             Alert.alert('Error', 'Failed to delete credential.');
           }
@@ -148,7 +108,7 @@ export default function CredentialListScreen() {
             />
           )}
           refreshing={loading}
-          onRefresh={fetchCredentials}
+          onRefresh={reload}
         />
       )}
     </View>
