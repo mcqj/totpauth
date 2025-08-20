@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { View, Text, Button, Alert, TextInput } from 'react-native';
+import { View, Text, Button, Alert, TextInput, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { parseTotpUri } from '../utils/parseTotpUri';
 import * as SecureStore from 'expo-secure-store';
@@ -59,67 +59,73 @@ export default function AddCredentialScreen() {
           />
         </>
       ) : manualMode ? (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ fontWeight: 'bold', marginBottom: 8 }}>Manual Entry</Text>
-          <TextInput
-            style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
-            placeholder="Account Name"
-            value={manualAccountName}
-            onChangeText={setManualAccountName}
-          />
-          <TextInput
-            style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
-            placeholder="Issuer (optional)"
-            value={manualIssuer}
-            onChangeText={setManualIssuer}
-          />
-          <TextInput
-            style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
-            placeholder="Secret"
-            value={manualSecret}
-            onChangeText={setManualSecret}
-            autoCapitalize="none"
-          />
-          <Button
-            title="Save Manual Entry"
-            onPress={async () => {
-              if (!manualAccountName || !manualSecret) {
-                Alert.alert('Missing Fields', 'Account name and secret are required.');
-                return;
-              }
-              try {
-                // Sanitize key: only alphanumeric, '.', '-', '_'
-                const safeAccountName = manualAccountName.replace(/[^a-zA-Z0-9._-]/g, '_');
-                const key = `totp_${safeAccountName}`;
-                await SecureStore.setItemAsync(
-                  key,
-                  JSON.stringify({
-                    accountName: manualAccountName,
-                    issuer: manualIssuer,
-                    secret: manualSecret,
-                  })
-                );
-                // Update key list
-                const keysRaw = await SecureStore.getItemAsync('totp_keys');
-                let keys: string[] = [];
-                if (keysRaw) {
-                  try { keys = JSON.parse(keysRaw); } catch {}
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={80}
+        >
+          <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontWeight: 'bold', marginBottom: 8 }}>Manual Entry</Text>
+            <TextInput
+              style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
+              placeholder="Account Name"
+              value={manualAccountName}
+              onChangeText={setManualAccountName}
+            />
+            <TextInput
+              style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
+              placeholder="Issuer (optional)"
+              value={manualIssuer}
+              onChangeText={setManualIssuer}
+            />
+            <TextInput
+              style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
+              placeholder="Secret"
+              value={manualSecret}
+              onChangeText={setManualSecret}
+              autoCapitalize="none"
+            />
+            <Button
+              title="Save Manual Entry"
+              onPress={async () => {
+                if (!manualAccountName || !manualSecret) {
+                  Alert.alert('Missing Fields', 'Account name and secret are required.');
+                  return;
                 }
-                if (!keys.includes(key)) {
-                  keys.push(key);
-                  await SecureStore.setItemAsync('totp_keys', JSON.stringify(keys));
+                try {
+                  // Sanitize key: only alphanumeric, '.', '-', '_'
+                  const safeAccountName = manualAccountName.replace(/[^a-zA-Z0-9._-]/g, '_');
+                  const key = `totp_${safeAccountName}`;
+                  await SecureStore.setItemAsync(
+                    key,
+                    JSON.stringify({
+                      accountName: manualAccountName,
+                      issuer: manualIssuer,
+                      secret: manualSecret,
+                    })
+                  );
+                  // Update key list
+                  const keysRaw = await SecureStore.getItemAsync('totp_keys');
+                  let keys: string[] = [];
+                  if (keysRaw) {
+                    try { keys = JSON.parse(keysRaw); } catch {}
+                  }
+                  if (!keys.includes(key)) {
+                    keys.push(key);
+                    await SecureStore.setItemAsync('totp_keys', JSON.stringify(keys));
+                  }
+                  Alert.alert('Saved', 'Manual credential saved securely.');
+                  setManualAccountName('');
+                  setManualIssuer('');
+                  setManualSecret('');
+                  setManualMode(false);
+                } catch (e) {
+                  Alert.alert('Error', `Failed to save credential: ${e instanceof Error ? e.message : String(e)}`);
                 }
-                Alert.alert('Saved', 'Manual credential saved securely.');
-                setManualAccountName('');
-                setManualIssuer('');
-                setManualSecret('');
-                setManualMode(false);
-              } catch (e) {
-                Alert.alert('Error', `Failed to save credential: ${e instanceof Error ? e.message : String(e)}`);
-              }
-            }}
-          />
-        </View>
+              }}
+            />
+          </ScrollView>
+        </KeyboardAvoidingView>
       ) : (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ marginBottom: 12 }}>QR Data:</Text>
