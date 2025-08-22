@@ -133,3 +133,25 @@ The AI makes mistakes and some are pretty obvious and bad, like accidentally del
 One painful issue was the current working directory in the command window. Copilot was quite inconsistent about directory navigation. Sometimes, it issued a `cd expoapp` before running a command such as `npm install` and other times it didn't. When it did switch directories, it didn't switch back. An instruction to switch back was obeyed sometimes but not always. Another issue where it didn't seem to learn was that `--legacy-peer-deps` was needed but it always tried npm install without it and then tried again after a failure. These issues can probably be fixed with changes to copilot-instructions.md.
 
 **Beast Mode** - VSCode's Copilot Chat now allows you to create custom modes. One such custom mode created by Burke Holland is what he calls Beast Mode. It's designed to work with ChatGPT 4.1, which is not a reasoning model. This mode provides instructions to make 4.1 reflect more and it seems to produce improved results. Most of the mode's instructions reflect ideas from [OpenAI's Cookbook on Coding](https://cookbook.openai.com/examples/gpt4-1_prompting_guide). You can find the Beast Mode [here](https://burkeholland.github.io/posts/beast-mode-3-1/).
+
+**gpt-5** was released and VSCode got some updates to add it to the list of available models. It started
+with gpt-5 mini as it has unlimited usage with GH copilot. It seems that the features of Beast Mode or
+at least the most important ones are now rolled into VSCode's prompts. I used gpt-5 to implement some
+UI Improvements and my general impression is that it does a bit better than gpt-4 (even with Beast Mode).
+UI improvements included removing somewhat superfluous home screen and going straight to credential list,
+switching text buttons to icons, adding snackbars and custom dialogs in place of alerts. An initial
+attempt didn't go well when I allowed too many changes to be batched up. Proceeding with a more step
+wise approach worked better.
+
+Next I implemented scrolling of the list and Safe Areas. Scrolling worked
+well; I had to interfere manually to get Safe Area working as copilot went around in circles. It then 
+tried to refactor the safe area code into a common Screen component but introduced bugs with content
+being hidden. It went around in circles again an I stopped it and parked that change.
+
+I tried to get it to add unit testing with Jest and it struggled and circled again. I then pointed it
+at the relevant page in the web site with instructions and asked it to only create a single hello
+world test to validate the installation. It circled again so I stopped it and reverted changes. I
+added unit testing manually by following the simple concise instructions on the web page and I didn't
+have any issue so not sure why copilot couldn't make it work. Once I had the harness in place, I asked
+it to propose a single test an implement and that went OK. The second test resulted in some infinite
+rendering but it was able to fix that issue with only a couple of iterations.
