@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, Text, Button } from 'react-native';import { useRouter, Stack } from 'expo-router';
+import { View, Text, Button } from 'react-native';
+import { useRouter, Stack } from 'expo-router';
 import { useToast } from '../contexts/ToastContext';
 import ManualEntry from '../components/ManualEntry';
 import CameraScanner from '../components/CameraScanner';
