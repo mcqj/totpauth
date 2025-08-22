@@ -11,7 +11,6 @@ jest.mock('../utils/generateTotp', () => ({
 
 // Register this mock before importing modules that use it so Jest will
 // apply the mock when the module is evaluated (Jest hoists top-level
-// jest.mock calls). Keep the mock above any imports of the module-under-test.
 // Mock FontAwesome to avoid updates that require wrapping in act()
 jest.mock('@expo/vector-icons', () => ({
   FontAwesome: () => null,
