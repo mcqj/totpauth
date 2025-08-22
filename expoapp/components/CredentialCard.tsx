@@ -33,7 +33,8 @@ export default function CredentialCard({ credential, onDelete }: Props) {
       </View>
       <Pressable
         onPress={onDelete}
-        accessibilityLabel={`Delete ${credential.accountName}`}
+  accessibilityLabel={`Delete ${credential.accountName}`}
+  testID={`delete-${credential.accountName}`}
         style={({ pressed }) => [{
           padding: 8,
           borderRadius: 20,
