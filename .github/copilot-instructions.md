@@ -52,3 +52,9 @@ export default function ExampleComponent({ title }: Props) {
 ---
 
 For more details, refer to the official [React Native](https://reactnative.dev/docs/environment-setup), [Expo](https://expo.dev/), [`expo-router`](https://expo.github.io/router/docs), and [`nativewind`](https://www.nativewind.dev/) documentation.
+
+## Javascript / TypeScript Conventions
+
+- All import statements should be at the beginning of files before any code
+- Use `import { Component } from 'react';` instead of `import React, { Component } from 'react';`
+- Don't mix esModule and CommonJS syntax in the same file

@@ -1,11 +1,18 @@
-import React from 'react';
 import { Text, Pressable } from 'react-native';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { renderWithProviders } from '../tests/utils';
 
 // Mock the underlying hook so we can control add/remove behavior.
+// Register this mock before importing modules that use it so Jest will
+// apply the mock when the module is evaluated (Jest hoists top-level
+// jest.mock calls). Keep the mock above any imports of the module-under-test.
+// Register this mock before importing modules that use it so Jest will
+// apply the mock when the module is evaluated (Jest hoists top-level
+// jest.mock calls). Keep the mock above any imports of the module-under-test.
 jest.mock('../hooks/useCredentials');
-const mockUseCredentials = require('../hooks/useCredentials').default as jest.Mock;
+// Use Jest's requireMock to synchronously access the mocked module (avoids
+// runtime import() and keeps ES-style code without using CommonJS require()).
+const mockUseCredentials = jest.requireMock('../hooks/useCredentials').default as jest.Mock;
 
 import { CredentialsProvider, useCredentialsContext } from '../contexts/CredentialsContext';
 
