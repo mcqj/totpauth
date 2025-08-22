@@ -57,4 +57,4 @@ For more details, refer to the official [React Native](https://reactnative.dev/d
 
 - All import statements should be at the beginning of files before any code
 - Use `import { Component } from 'react';` instead of `import React, { Component } from 'react';`
-- Don't mix esModule and CommonJS syntax in the same file
+- Always prefer esModules to commonJS and never mix esModule and CommonJS syntax in the same file
