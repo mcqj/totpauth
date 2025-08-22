@@ -8,7 +8,6 @@ import { renderWithProviders } from '../tests/utils';
 // jest.mock calls). Keep the mock above any imports of the module-under-test.
 // Register this mock before importing modules that use it so Jest will
 // apply the mock when the module is evaluated (Jest hoists top-level
-// jest.mock calls). Keep the mock above any imports of the module-under-test.
 jest.mock('../hooks/useCredentials');
 // Use Jest's requireMock to synchronously access the mocked module (avoids
 // runtime import() and keeps ES-style code without using CommonJS require()).
