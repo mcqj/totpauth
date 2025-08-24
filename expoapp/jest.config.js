@@ -7,4 +7,6 @@ module.exports = {
   '^expo-router$': '<rootDir>/__mocks__/expo-router.js',
   '^@expo/vector-icons(.*)$': '<rootDir>/__mocks__/@expo-vector-icons.jsx'
   }
+  ,
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js']
 };

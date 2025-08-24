@@ -23,9 +23,16 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
 
   useEffect(() => {
     if (initial) {
-      setManualAccountName((s) => (s ? s : initial.accountName || ''));
-      setManualIssuer((s) => (s ? s : initial.issuer || ''));
-      setManualSecret((s) => (s ? s : initial.secret || ''));
+  // When `initial` changes we should update the form values so the
+  // component can be safely reused. Overwriting user-typed values is
+  // acceptable here because a change in `initial` indicates the parent
+  // intends to show a different credential (for example switching into
+  // edit mode for another item). If you want to preserve in-progress
+  // edits instead, use a more specific heuristic (e.g. compare previous
+  // initial values) instead of this simple behavior.
+  setManualAccountName(initial.accountName || '');
+  setManualIssuer(initial.issuer || '');
+  setManualSecret(initial.secret || '');
     }
   }, [initial]);
 
@@ -65,6 +72,8 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
         ) : null}
         {validationErrors ? <TotpError errors={validationErrors} /> : null}
         <Button
+          testID="manual-save"
+          accessibilityLabel={saveLabel || 'Save Manual Entry'}
           title={saveLabel || 'Save Manual Entry'}
           onPress={async () => {
             // In edit mode (allowSecretEdit === false) we don't expect the user to supply a secret.
