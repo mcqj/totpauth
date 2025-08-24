@@ -65,5 +65,35 @@ export default function useCredentials() {
     await load();
   }, [load]);
 
-  return { credentials, loading, add, remove, reload: load };
+  const update = useCallback(async (key: string, cred: Omit<Credential, '_key'>) => {
+    // compute new key based on account name
+    const safeAccountName = cred.accountName.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const newKey = `totp_${safeAccountName}`;
+
+    // write new value
+    await SecureStore.setItemAsync(newKey, JSON.stringify(cred));
+
+    const keysRaw = await SecureStore.getItemAsync(KEYS_STORE);
+    let keys: string[] = [];
+    if (keysRaw) {
+      try { keys = JSON.parse(keysRaw); } catch {}
+    }
+
+    // ensure newKey present
+    if (!keys.includes(newKey)) {
+      keys.push(newKey);
+    }
+
+    // if key changed, remove old key and its entry
+    if (key !== newKey) {
+      await SecureStore.deleteItemAsync(key);
+      keys = keys.filter(k => k !== key);
+    }
+
+    await SecureStore.setItemAsync(KEYS_STORE, JSON.stringify(keys));
+    await load();
+    return newKey;
+  }, [load]);
+
+  return { credentials, loading, add, remove, update, reload: load };
 }

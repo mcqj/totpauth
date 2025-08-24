@@ -7,13 +7,14 @@ type CredentialsContextValue = {
   loading: boolean;
   add: (c: Omit<Credential, '_key'>) => Promise<string>;
   remove: (key: string) => Promise<void>;
+  update: (key: string, c: Omit<Credential, '_key'>) => Promise<string>;
   reload: () => Promise<void>;
 };
 
 const CredentialsContext = createContext<CredentialsContextValue | undefined>(undefined);
 
 export function CredentialsProvider({ children }: { children: ReactNode }) {
-  const { credentials: externalCreds, loading, add: addOrig, remove: removeOrig, reload } = useCredentials();
+  const { credentials: externalCreds, loading, add: addOrig, remove: removeOrig, update: updateOrig, reload } = useCredentials();
 
   // Local copy used for optimistic updates. Keep in sync with externalCreds.
   const [credentials, setCredentials] = useState<Credential[]>(externalCreds);
@@ -53,11 +54,33 @@ export function CredentialsProvider({ children }: { children: ReactNode }) {
     }
   }, [removeOrig, credentials]);
 
+  const update = useCallback(async (key: string, cred: Omit<Credential, '_key'>) => {
+    // Optimistic update: replace item locally
+    const before = credentials;
+    const optimistic: Credential = { ...cred, _key: key } as Credential;
+    setCredentials((prev) => prev.map((c) => (c._key === key ? optimistic : c)));
+    try {
+      const realKey = await updateOrig(key, cred);
+      // If the underlying storage returned a different key (account name changed), update local item key
+      if (realKey && realKey !== key) {
+        setCredentials((prev) => prev.map((c) => (c._key === key ? { ...c, _key: realKey } : c)));
+        return realKey;
+      }
+      return realKey || key;
+    } catch (e) {
+      setCredentials(before);
+      throw e;
+    } finally {
+      try { await reload(); } catch {}
+    }
+  }, [credentials, reload, updateOrig]);
+
   const value: CredentialsContextValue = {
     credentials,
     loading,
     add,
     remove,
+    update,
     reload,
   };
 
