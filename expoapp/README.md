@@ -16,6 +16,12 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npx expo start
    ```
 
+   If you add or restore platform dependencies (for example to enable picking images), install them with:
+
+   ```bash
+   npx expo install expo-image-picker
+   ```
+
 In the output, you'll find options to open the app in a
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)
