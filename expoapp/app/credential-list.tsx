@@ -63,6 +63,7 @@ export default function CredentialListScreen() {
               <CredentialCard
                 credential={item}
                 onDelete={() => confirmDelete(item._key || '')}
+                onEdit={() => router.push(`/add-credential?key=${encodeURIComponent(item._key || '')}`)}
               />
             )}
             refreshing={loading}

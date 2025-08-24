@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, Button } from 'react-native';
-import { useRouter, Stack } from 'expo-router';
+import { useRouter, Stack, useLocalSearchParams } from 'expo-router';
 import { useToast } from '../contexts/ToastContext';
 import ManualEntry from '../components/ManualEntry';
 import CameraScanner from '../components/CameraScanner';
@@ -21,16 +21,36 @@ export default function AddCredentialScreen() {
     }
   };
 
-  const { add } = useCredentialsContext();
+  const { add, update, credentials } = useCredentialsContext();
   const { show } = useToast();
   const router = useRouter();
+  const params = useLocalSearchParams();
+  const editingKey = typeof params?.key === 'string' ? params.key : undefined;
+  const [initial, setInitial] = useState<{ accountName?: string; issuer?: string; secret?: string } | null>(null);
+
+  useEffect(() => {
+    if (editingKey) {
+      const found = credentials.find((c) => c._key === editingKey);
+      if (found) {
+        setInitial({ accountName: found.accountName, issuer: found.issuer, secret: found.secret });
+        // Enter manual edit mode when editing an existing credential
+        setManualMode(true);
+        setShowCamera(false);
+      }
+    }
+  }, [editingKey, credentials]);
 
   const onSaveParsed = async (parsed: { accountName: string; issuer?: string; secret: string }) => {
     try {
-      await add(parsed as any);
-      show('Credential saved securely.', { type: 'success' });
-  // Go back to credential list after successful save
-  router.replace('/credential-list');
+      if (editingKey) {
+        await update(editingKey, parsed as any);
+        show('Credential updated securely.', { type: 'success' });
+      } else {
+        await add(parsed as any);
+        show('Credential saved securely.', { type: 'success' });
+      }
+      // Go back to credential list after successful save
+      router.replace('/credential-list');
     } catch (e) {
       show(`Failed to save credential: ${e instanceof Error ? e.message : String(e)}`, { type: 'error' });
     }
@@ -38,8 +58,8 @@ export default function AddCredentialScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <Stack.Screen options={{ title: 'Add Credential' }} />
-      <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginTop: 16 }}>Add Credential</Text>
+      <Stack.Screen options={{ title: editingKey ? 'Edit Credential' : 'Add Credential' }} />
+      <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginTop: 16 }}>{editingKey ? 'Edit Credential' : 'Add Credential'}</Text>
       {!showCamera && !manualMode ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Button title="Scan QR Code" onPress={() => setShowCamera(true)} />
@@ -51,11 +71,21 @@ export default function AddCredentialScreen() {
         <CameraScanner onScanned={(d) => handleBarCodeScanned({ data: d })} onCancel={() => { show('Cancelled', { type: 'info' }); router.replace('/credential-list'); }} />
       ) : manualMode ? (
         <ManualEntry
+          initial={initial || undefined}
+          allowSecretEdit={editingKey ? false : true}
+          saveLabel={editingKey ? 'Save Changes' : 'Save Manual Entry'}
           onCancel={() => { show('Cancelled', { type: 'info' }); router.replace('/credential-list'); }}
           onSave={async ({ accountName, issuer, secret }) => {
             try {
-              await add({ accountName, issuer, secret });
-              show('Manual credential saved securely.', { type: 'success' });
+              if (editingKey) {
+                // When editing we treat this as updating name/issuer only; keep the existing secret
+                const secretToUse = initial?.secret || secret;
+                await update(editingKey, { accountName, issuer, secret: secretToUse });
+                show('Manual credential updated securely.', { type: 'success' });
+              } else {
+                await add({ accountName, issuer, secret });
+                show('Manual credential saved securely.', { type: 'success' });
+              }
               // navigate back to credential list
               router.replace('/credential-list');
             } catch (e) {

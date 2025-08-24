@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { useToast } from '../contexts/ToastContext';
 import { validateSecret } from '../utils/validateSecret';
@@ -8,15 +8,27 @@ import TotpError from './TotpError';
 type Props = {
   onSave: (payload: { accountName: string; issuer?: string; secret: string }) => Promise<void> | void;
   onCancel?: () => void;
+  initial?: { accountName?: string; issuer?: string; secret?: string };
+  saveLabel?: string;
+  allowSecretEdit?: boolean;
 };
 
-export default function ManualEntry({ onSave, onCancel }: Props) {
-  const [manualAccountName, setManualAccountName] = useState('');
-  const [manualIssuer, setManualIssuer] = useState('');
-  const [manualSecret, setManualSecret] = useState('');
+export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allowSecretEdit = true }: Props) {
+  const [manualAccountName, setManualAccountName] = useState(initial?.accountName || '');
+  const [manualIssuer, setManualIssuer] = useState(initial?.issuer || '');
+  const [manualSecret, setManualSecret] = useState(initial?.secret || '');
   const [validationErrors, setValidationErrors] = useState<string[] | null>(null);
 
   const { show } = useToast();
+
+  useEffect(() => {
+    if (initial) {
+      setManualAccountName((s) => (s ? s : initial.accountName || ''));
+      setManualIssuer((s) => (s ? s : initial.issuer || ''));
+      setManualSecret((s) => (s ? s : initial.secret || ''));
+    }
+  }, [initial]);
+
 
   return (
     <KeyboardAvoidingView
@@ -28,7 +40,7 @@ export default function ManualEntry({ onSave, onCancel }: Props) {
         contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={{ fontWeight: 'bold', marginBottom: 8 }}>Manual Entry</Text>
+  {allowSecretEdit ? <Text style={{ fontWeight: 'bold', marginBottom: 8 }}>Manual Entry</Text> : null}
         <TextInput
           style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
           placeholder="Account Name"
@@ -41,19 +53,23 @@ export default function ManualEntry({ onSave, onCancel }: Props) {
           value={manualIssuer}
           onChangeText={(t) => { setManualIssuer(t); setValidationErrors(null); }}
         />
-        <TextInput
-          style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
-          placeholder="Secret"
-          value={manualSecret}
-          onChangeText={(t) => { setManualSecret(t); setValidationErrors(null); }}
-          autoCapitalize="none"
-        />
+        {/** If allowSecretEdit is false, don't show the secret at all. Otherwise show the editable input. */}
+        {allowSecretEdit ? (
+          <TextInput
+            style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
+            placeholder="Secret"
+            value={manualSecret}
+            onChangeText={(t) => { setManualSecret(t); setValidationErrors(null); }}
+            autoCapitalize="none"
+          />
+        ) : null}
         {validationErrors ? <TotpError errors={validationErrors} /> : null}
         <Button
-          title="Save Manual Entry"
+          title={saveLabel || 'Save Manual Entry'}
           onPress={async () => {
-            if (!manualAccountName || !manualSecret) {
-              show('Account name and secret are required.', { type: 'error' });
+            // In edit mode (allowSecretEdit === false) we don't expect the user to supply a secret.
+            if (!manualAccountName) {
+              show('Account name is required.', { type: 'error' });
               return;
             }
 
@@ -72,19 +88,35 @@ export default function ManualEntry({ onSave, onCancel }: Props) {
               }
             }
 
-            // Run secret validation
-            const { valid, normalized, errors } = validateSecret(manualSecret);
-            if (!valid) {
-              setValidationErrors(errors);
-              return;
-            }
-
             try {
-              await onSave({ accountName: manualAccountName.trim(), issuer: manualIssuer.trim() || undefined, secret: normalized! });
-              setManualAccountName('');
-              setManualIssuer('');
-              setManualSecret('');
-              setValidationErrors(null);
+              if (!allowSecretEdit) {
+                // Use the initial secret when editing; fail if it's missing
+                const secretToUse = initial?.secret;
+                if (!secretToUse) {
+                  show('Cannot edit credential: original secret not available.', { type: 'error' });
+                  return;
+                }
+                await onSave({ accountName: manualAccountName.trim(), issuer: manualIssuer.trim() || undefined, secret: secretToUse });
+                setValidationErrors(null);
+                // Do not clear fields in edit mode (keep values stable)
+              } else {
+                if (!manualSecret) {
+                  show('Account name and secret are required.', { type: 'error' });
+                  return;
+                }
+                // Run secret validation
+                const { valid, normalized, errors } = validateSecret(manualSecret);
+                if (!valid) {
+                  setValidationErrors(errors);
+                  return;
+                }
+
+                await onSave({ accountName: manualAccountName.trim(), issuer: manualIssuer.trim() || undefined, secret: normalized! });
+                setManualAccountName('');
+                setManualIssuer('');
+                setManualSecret('');
+                setValidationErrors(null);
+              }
             } catch (e) {
               show(`${e instanceof Error ? e.message : String(e)}`, { type: 'error' });
             }
