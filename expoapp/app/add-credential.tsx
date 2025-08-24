@@ -33,10 +33,10 @@ export default function AddCredentialScreen() {
       const found = credentials.find((c) => c._key === editingKey);
       if (found) {
         setInitial({ accountName: found.accountName, issuer: found.issuer, secret: found.secret });
+        // Enter manual edit mode when editing an existing credential
+        setManualMode(true);
+        setShowCamera(false);
       }
-  // Enter manual edit mode when editing an existing credential
-  setManualMode(true);
-  setShowCamera(false);
     }
   }, [editingKey, credentials]);
 
