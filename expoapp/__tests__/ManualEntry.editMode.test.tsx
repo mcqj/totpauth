@@ -1,8 +1,12 @@
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { act } from 'react-test-renderer';
-import { CredentialsProvider } from '../contexts/CredentialsContext';
-import { ToastProvider } from '../contexts/ToastContext';
 import ManualEntry from '../components/ManualEntry';
+
+// Mock the toast context to avoid animations/timers interfering with test timing.
+jest.mock('../contexts/ToastContext', () => ({
+  ToastProvider: ({ children }: any) => children,
+  useToast: () => ({ show: jest.fn() }),
+}));
 
 describe('ManualEntry edit mode', () => {
   /*
@@ -20,14 +24,13 @@ describe('ManualEntry edit mode', () => {
    * provider async initialization (or mock the provider/storage) when you
    * have time. If you'd like, I can follow up and implement the mock.
    */
-  test.skip('hides secret input and calls onSave with initial secret', async () => {
-    const initial = { accountName: 'alice@example.com', issuer: 'Example', secret: 'JBSWY3DPEHPK3PXP' };
+  test('hides secret input and calls onSave with initial secret', async () => {
+    // Use an account name that passes the project's label validation (dots are disallowed).
+    const initial = { accountName: 'alice@example', issuer: 'Example', secret: 'JBSWY3DPEHPK3PXP' };
     const onSave = jest.fn().mockResolvedValue(undefined);
 
   const { queryByPlaceholderText, getByPlaceholderText, getByText, getByTestId } = render(
-      <ToastProvider>
-        <ManualEntry onSave={onSave} initial={initial} allowSecretEdit={false} saveLabel="Save Changes" />
-      </ToastProvider>
+      <ManualEntry onSave={onSave} initial={initial} allowSecretEdit={false} saveLabel="Save Changes" />
     );
 
     // Account and issuer inputs are present
