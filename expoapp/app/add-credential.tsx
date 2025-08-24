@@ -26,13 +26,13 @@ export default function AddCredentialScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const editingKey = typeof params?.key === 'string' ? params.key : undefined;
-  const [initial, setInitial] = useState<{ accountName?: string; issuer?: string; secret?: string } | null>(null);
+  const [initial, setInitial] = useState<{ accountName?: string; issuer?: string; secret?: string; icon?: string } | null>(null);
 
   useEffect(() => {
     if (editingKey) {
       const found = credentials.find((c) => c._key === editingKey);
       if (found) {
-        setInitial({ accountName: found.accountName, issuer: found.issuer, secret: found.secret });
+  setInitial({ accountName: found.accountName, issuer: found.issuer, secret: found.secret, icon: found.icon });
         // Enter manual edit mode when editing an existing credential
         setManualMode(true);
         setShowCamera(false);
@@ -75,15 +75,15 @@ export default function AddCredentialScreen() {
           allowSecretEdit={editingKey ? false : true}
           saveLabel={editingKey ? 'Save Changes' : 'Save Manual Entry'}
           onCancel={() => { show('Cancelled', { type: 'info' }); router.replace('/credential-list'); }}
-          onSave={async ({ accountName, issuer, secret }) => {
+      onSave={async ({ accountName, issuer, secret, icon }) => {
             try {
               if (editingKey) {
                 // When editing we treat this as updating name/issuer only; keep the existing secret
                 const secretToUse = initial?.secret || secret;
-                await update(editingKey, { accountName, issuer, secret: secretToUse });
+        await update(editingKey, { accountName, issuer, secret: secretToUse, icon });
                 show('Manual credential updated securely.', { type: 'success' });
               } else {
-                await add({ accountName, issuer, secret });
+        await add({ accountName, issuer, secret, icon });
                 show('Manual credential saved securely.', { type: 'success' });
               }
               // navigate back to credential list

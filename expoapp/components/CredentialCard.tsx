@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { generateTotp } from '../utils/generateTotp';
 
@@ -27,10 +27,19 @@ export default function CredentialCard({ credential, onDelete, onEdit }: Props) 
 
   return (
     <View style={{ padding: 12, borderBottomWidth: 1, borderColor: '#eee', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-      <View>
-        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{credential.accountName}</Text>
-        <Text>Issuer: {credential.issuer || 'N/A'}</Text>
-        <Text>Code: <Text style={{ fontFamily: 'monospace', fontSize: 18 }}>{code}</Text> <Text style={{ color: '#888' }}>({timeLeft}s)</Text></Text>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+        <View style={{ marginRight: 12 }}>
+          {credential.icon ? (
+            <Image source={{ uri: credential.icon }} style={{ width: 48, height: 48, borderRadius: 6 }} />
+          ) : (
+            <Image source={require('../assets/images/icon.png')} style={{ width: 48, height: 48, borderRadius: 6 }} />
+          )}
+        </View>
+        <View>
+          <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{credential.accountName}</Text>
+          <Text>Issuer: {credential.issuer || 'N/A'}</Text>
+          <Text>Code: <Text style={{ fontFamily: 'monospace', fontSize: 18 }}>{code}</Text> <Text style={{ color: '#888' }}>({timeLeft}s)</Text></Text>
+        </View>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Pressable
