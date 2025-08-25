@@ -1,7 +1,9 @@
 import { useState, useRef } from 'react';
-import { View, Text, Button, ActivityIndicator } from 'react-native';
+import { View, Button, ActivityIndicator } from 'react-native';
 import { CameraView } from 'expo-camera';
 import useCameraPermission from '../hooks/useCameraPermission';
+import { ThemedView } from './ThemedView';
+import { ThemedText } from './ThemedText';
 
 type Props = {
   onScanned: (data: string) => void;
@@ -23,17 +25,17 @@ export default function CameraScanner({ onScanned, onCancel, style }: Props) {
 
   if (!permission) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <ThemedView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator />
-        <Text style={{ marginTop: 12 }}>Requesting camera permission...</Text>
-      </View>
+        <ThemedText style={{ marginTop: 12 }}>Requesting camera permission...</ThemedText>
+      </ThemedView>
     );
   }
 
   if (!permission.granted) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Camera access denied. Please enter credential manually.</Text>
+      <ThemedView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ThemedText>Camera access denied. Please enter credential manually.</ThemedText>
         <View style={{ marginTop: 12 }}>
           <Button title="Grant Camera Permission" onPress={requestPermission} />
         </View>
@@ -42,7 +44,7 @@ export default function CameraScanner({ onScanned, onCancel, style }: Props) {
             <Button title="Cancel" onPress={onCancel} />
           </View>
         ) : null}
-      </View>
+      </ThemedView>
     );
   }
 
