@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Pressable, Image } from 'react-native';
+import { Pressable, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { generateTotp } from '../utils/generateTotp';
 import { ThemedView } from './ThemedView';
@@ -36,21 +36,21 @@ export default function CredentialCard({ credential, onDelete, onEdit }: Props) 
 
   return (
     <ThemedView style={{ padding: 12, borderBottomWidth: 1, borderColor, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-      <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-        <View style={{ marginRight: 12 }}>
+      <ThemedView style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+        <ThemedView style={{ marginRight: 12 }}>
           {credential.icon ? (
             <Image source={{ uri: credential.icon }} style={{ width: 48, height: 48, borderRadius: 6 }} />
           ) : (
             <Image source={require('../assets/images/icon.png')} style={{ width: 48, height: 48, borderRadius: 6 }} />
           )}
-        </View>
-        <View>
+        </ThemedView>
+        <ThemedView>
           <ThemedText style={{ fontWeight: 'bold', fontSize: 16 }}>{credential.accountName}</ThemedText>
           <ThemedText>Issuer: {credential.issuer || 'N/A'}</ThemedText>
           <ThemedText>Code: <ThemedText style={{ fontFamily: 'monospace', fontSize: 18 }}>{code}</ThemedText> <ThemedText style={{ color: textSecondary }}>({timeLeft}s)</ThemedText></ThemedText>
-        </View>
-      </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        </ThemedView>
+      </ThemedView>
+      <ThemedView style={{ flexDirection: 'row', alignItems: 'center' }}>
         <Pressable
           onPress={() => onEdit && onEdit()}
           accessibilityLabel={`Edit ${credential.accountName}`}
@@ -80,7 +80,7 @@ export default function CredentialCard({ credential, onDelete, onEdit }: Props) 
       >
         <FontAwesome name="trash" size={20} color={deleteButtonColor} />
       </Pressable>
-      </View>
+      </ThemedView>
     </ThemedView>
   );
 }

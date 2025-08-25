@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, TextInput, Button, KeyboardAvoidingView, ScrollView, Platform, Image } from 'react-native';
+import { TextInput, Button, KeyboardAvoidingView, ScrollView, Platform, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -204,9 +204,9 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
           }}
         />
         {onCancel ? (
-          <View style={{ marginTop: 12 }}>
+          <ThemedView style={{ marginTop: 12 }}>
             <Button title="Cancel" onPress={onCancel} />
-          </View>
+          </ThemedView>
         ) : null}
       </ScrollView>
     </KeyboardAvoidingView>

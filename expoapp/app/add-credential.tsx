@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Button } from 'react-native';
+import { Button } from 'react-native';
 import { useRouter, Stack, useLocalSearchParams } from 'expo-router';
 import { useToast } from '../contexts/ToastContext';
 import ManualEntry from '../components/ManualEntry';
@@ -65,9 +65,9 @@ export default function AddCredentialScreen() {
       {!showCamera && !manualMode ? (
         <ThemedView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Button title="Scan QR Code" onPress={() => setShowCamera(true)} />
-          <View style={{ marginTop: 16 }}>
+          <ThemedView style={{ marginTop: 16 }}>
             <Button title="Enter Manually" onPress={() => setManualMode(true)} />
-          </View>
+          </ThemedView>
         </ThemedView>
       ) : showCamera && !scanned ? (
         <CameraScanner onScanned={(d) => handleBarCodeScanned({ data: d })} onCancel={() => { show('Cancelled', { type: 'info' }); router.replace('/credential-list'); }} />

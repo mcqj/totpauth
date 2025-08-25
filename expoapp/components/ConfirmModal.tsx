@@ -1,4 +1,4 @@
-import { Modal, View, Text, Pressable, StyleSheet } from 'react-native';
+import { Modal, Pressable, StyleSheet } from 'react-native';
 import { useThemeColor } from '../hooks/useThemeColor';
 import { ThemedText } from './ThemedText';
 import { ThemedView } from './ThemedView';
@@ -21,20 +21,20 @@ export default function ConfirmModal({ visible, title = 'Confirm', message, conf
   
   return (
     <Modal transparent visible={visible} animationType="fade">
-      <View style={[styles.backdrop, { backgroundColor: modalBackdrop }]}>
+      <ThemedView style={[styles.backdrop, { backgroundColor: modalBackdrop }]}>
         <ThemedView style={[styles.container, { backgroundColor: modalBackground }]}>
           <ThemedText style={styles.title}>{title}</ThemedText>
           {message ? <ThemedText style={styles.message}>{message}</ThemedText> : null}
-          <View style={styles.actions}>
+          <ThemedView style={styles.actions}>
             <Pressable onPress={onCancel} style={({ pressed }) => [styles.button, styles.cancel, pressed && { backgroundColor: pressedBackground }]}>
               <ThemedText style={styles.cancelText}>{cancelLabel}</ThemedText>
             </Pressable>
             <Pressable onPress={onConfirm} style={({ pressed }) => [styles.button, { backgroundColor: deleteButtonColor }, pressed && styles.pressed]}>
-              <Text style={styles.confirmText}>{confirmLabel}</Text>
+              <ThemedText style={styles.confirmText}>{confirmLabel}</ThemedText>
             </Pressable>
-          </View>
+          </ThemedView>
         </ThemedView>
-      </View>
+      </ThemedView>
     </Modal>
   );
 }
