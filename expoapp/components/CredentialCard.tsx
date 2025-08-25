@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
-import { View, Text, Pressable, Image } from 'react-native';
+import { View, Pressable, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { generateTotp } from '../utils/generateTotp';
+import { ThemedView } from './ThemedView';
+import { ThemedText } from './ThemedText';
+import { useThemeColor } from '../hooks/useThemeColor';
 
 import { Credential } from '../types/credential';
 
@@ -14,6 +17,12 @@ type Props = {
 export default function CredentialCard({ credential, onDelete, onEdit }: Props) {
   const [code, setCode] = useState('');
   const [timeLeft, setTimeLeft] = useState(30 - (Math.floor(Date.now() / 1000) % 30));
+  
+  const borderColor = useThemeColor({}, 'border');
+  const editButtonColor = useThemeColor({}, 'editButton');
+  const deleteButtonColor = useThemeColor({}, 'textSecondary');
+  const pressedBackground = useThemeColor({}, 'pressedBackground');
+  const textSecondary = useThemeColor({}, 'textSecondary');
 
   useEffect(() => {
     function updateCode() {
@@ -26,7 +35,7 @@ export default function CredentialCard({ credential, onDelete, onEdit }: Props) 
   }, [credential.secret]);
 
   return (
-    <View style={{ padding: 12, borderBottomWidth: 1, borderColor: '#eee', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+    <ThemedView style={{ padding: 12, borderBottomWidth: 1, borderColor, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
       <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
         <View style={{ marginRight: 12 }}>
           {credential.icon ? (
@@ -36,9 +45,9 @@ export default function CredentialCard({ credential, onDelete, onEdit }: Props) 
           )}
         </View>
         <View>
-          <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{credential.accountName}</Text>
-          <Text>Issuer: {credential.issuer || 'N/A'}</Text>
-          <Text>Code: <Text style={{ fontFamily: 'monospace', fontSize: 18 }}>{code}</Text> <Text style={{ color: '#888' }}>({timeLeft}s)</Text></Text>
+          <ThemedText style={{ fontWeight: 'bold', fontSize: 16 }}>{credential.accountName}</ThemedText>
+          <ThemedText>Issuer: {credential.issuer || 'N/A'}</ThemedText>
+          <ThemedText>Code: <ThemedText style={{ fontFamily: 'monospace', fontSize: 18 }}>{code}</ThemedText> <ThemedText style={{ color: textSecondary }}>({timeLeft}s)</ThemedText></ThemedText>
         </View>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -49,13 +58,13 @@ export default function CredentialCard({ credential, onDelete, onEdit }: Props) 
           style={({ pressed }) => [{
             padding: 8,
             borderRadius: 20,
-            backgroundColor: pressed ? '#eee' : 'transparent',
+            backgroundColor: pressed ? pressedBackground : 'transparent',
             alignItems: 'center',
             justifyContent: 'center',
             marginRight: 8,
           }]}
         >
-          <FontAwesome name="pencil" size={18} color="#2563EB" />
+          <FontAwesome name="pencil" size={18} color={editButtonColor} />
         </Pressable>
         <Pressable
           onPress={onDelete}
@@ -64,14 +73,14 @@ export default function CredentialCard({ credential, onDelete, onEdit }: Props) 
         style={({ pressed }) => [{
           padding: 8,
           borderRadius: 20,
-          backgroundColor: pressed ? '#eee' : 'transparent',
+          backgroundColor: pressed ? pressedBackground : 'transparent',
           alignItems: 'center',
           justifyContent: 'center',
         }]}
       >
-        <FontAwesome name="trash" size={20} color="#888" />
+        <FontAwesome name="trash" size={20} color={deleteButtonColor} />
       </Pressable>
       </View>
-    </View>
+    </ThemedView>
   );
 }

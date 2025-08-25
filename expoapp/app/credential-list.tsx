@@ -1,18 +1,23 @@
 import { useState, useCallback } from 'react';
 import { useFocusEffect, useRouter, Stack } from 'expo-router';
-import { View, Text, FlatList, Pressable } from 'react-native';
+import { FlatList, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
 import { useCredentialsContext } from '../contexts/CredentialsContext';
 import ConfirmModal from '../components/ConfirmModal';
 import { useToast } from '../contexts/ToastContext';
 import CredentialCard from '../components/CredentialCard';
+import { ThemedView } from '../components/ThemedView';
+import { ThemedText } from '../components/ThemedText';
+import { useThemeColor } from '../hooks/useThemeColor';
 
 export default function CredentialListScreen() {
   const { credentials, loading, remove, reload } = useCredentialsContext();
   const router = useRouter();
   const { show } = useToast();
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+  
+  const iconColor = useThemeColor({}, 'editButton');
 
   useFocusEffect(
     useCallback(() => {
@@ -36,7 +41,7 @@ export default function CredentialListScreen() {
 
   return (
     <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1">
-      <View className="flex-1 bg-white">
+      <ThemedView className="flex-1">
         <Stack.Screen
           options={{
             title: 'Credentials',
@@ -46,15 +51,15 @@ export default function CredentialListScreen() {
                 accessibilityLabel="Add Credential"
                 className="mr-4"
               >
-                <FontAwesome name="plus" size={28} color="#2563EB" />
+                <FontAwesome name="plus" size={28} color={iconColor} />
               </Pressable>
             ),
           }}
         />
         {loading ? (
-          <Text className="text-center mt-8">Loading...</Text>
+          <ThemedText className="text-center mt-8">Loading...</ThemedText>
         ) : credentials.length === 0 ? (
-          <Text className="text-center mt-8">No credentials saved.</Text>
+          <ThemedText className="text-center mt-8">No credentials saved.</ThemedText>
         ) : (
           <FlatList
             data={credentials}
@@ -77,7 +82,7 @@ export default function CredentialListScreen() {
           onConfirm={handleConfirmDelete}
           onCancel={handleCancelDelete}
         />
-      </View>
+      </ThemedView>
     </SafeAreaView>
   );
 }

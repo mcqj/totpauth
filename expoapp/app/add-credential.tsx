@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, Button } from 'react-native';
+import { View, Button } from 'react-native';
 import { useRouter, Stack, useLocalSearchParams } from 'expo-router';
 import { useToast } from '../contexts/ToastContext';
 import ManualEntry from '../components/ManualEntry';
@@ -7,6 +7,8 @@ import CameraScanner from '../components/CameraScanner';
 import { validateTotpUri } from '../utils/validateTotpUri';
 import TotpError from '../components/TotpError';
 import { useCredentialsContext } from '../contexts/CredentialsContext';
+import { ThemedView } from '../components/ThemedView';
+import { ThemedText } from '../components/ThemedText';
 
 export default function AddCredentialScreen() {
   const [scanned, setScanned] = useState(false);
@@ -57,16 +59,16 @@ export default function AddCredentialScreen() {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <ThemedView style={{ flex: 1 }}>
       <Stack.Screen options={{ title: editingKey ? 'Edit Credential' : 'Add Credential' }} />
-      <Text style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginTop: 16 }}>{editingKey ? 'Edit Credential' : 'Add Credential'}</Text>
+      <ThemedText style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginTop: 16 }}>{editingKey ? 'Edit Credential' : 'Add Credential'}</ThemedText>
       {!showCamera && !manualMode ? (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ThemedView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Button title="Scan QR Code" onPress={() => setShowCamera(true)} />
           <View style={{ marginTop: 16 }}>
             <Button title="Enter Manually" onPress={() => setManualMode(true)} />
           </View>
-        </View>
+        </ThemedView>
       ) : showCamera && !scanned ? (
         <CameraScanner onScanned={(d) => handleBarCodeScanned({ data: d })} onCancel={() => { show('Cancelled', { type: 'info' }); router.replace('/credential-list'); }} />
       ) : manualMode ? (
@@ -94,17 +96,17 @@ export default function AddCredentialScreen() {
           }}
         />
       ) : (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ marginBottom: 12 }}>QR Data:</Text>
-          <Text style={{ fontWeight: 'bold', marginBottom: 24 }}>{qrData}</Text>
+        <ThemedView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <ThemedText style={{ marginBottom: 12 }}>QR Data:</ThemedText>
+          <ThemedText style={{ fontWeight: 'bold', marginBottom: 24 }}>{qrData}</ThemedText>
           {(() => {
             const validated = qrData ? validateTotpUri(qrData) : { parsed: null, valid: false, errors: ['No QR data scanned.'] };
             if (!validated.valid) {
               return (
-                <View style={{ marginBottom: 16, width: '100%', alignItems: 'center', paddingHorizontal: 16 }}>
+                <ThemedView style={{ marginBottom: 16, width: '100%', alignItems: 'center', paddingHorizontal: 16 }}>
                   <TotpError errors={validated.errors} />
                   <Button title="Enter Manually" onPress={() => { setManualMode(true); setShowCamera(false); }} />
-                </View>
+                </ThemedView>
               );
             }
 
@@ -115,16 +117,16 @@ export default function AddCredentialScreen() {
             };
 
             return (
-              <View style={{ marginBottom: 16 }}>
-                <Text>Account: <Text style={{ fontWeight: 'bold' }}>{parsed.accountName}</Text></Text>
-                <Text>Issuer: <Text style={{ fontWeight: 'bold' }}>{parsed.issuer || 'N/A'}</Text></Text>
-                <Text>Secret: <Text style={{ fontWeight: 'bold' }}>{parsed.secret}</Text></Text>
+              <ThemedView style={{ marginBottom: 16 }}>
+                <ThemedText>Account: <ThemedText style={{ fontWeight: 'bold' }}>{parsed.accountName}</ThemedText></ThemedText>
+                <ThemedText>Issuer: <ThemedText style={{ fontWeight: 'bold' }}>{parsed.issuer || 'N/A'}</ThemedText></ThemedText>
+                <ThemedText>Secret: <ThemedText style={{ fontWeight: 'bold' }}>{parsed.secret}</ThemedText></ThemedText>
                 <Button title="Save" onPress={handleSave} disabled={!validated.valid} />
-              </View>
+              </ThemedView>
             );
           })()}
-        </View>
+        </ThemedView>
       )}
-    </View>
+    </ThemedView>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, KeyboardAvoidingView, ScrollView, Platform, Image } from 'react-native';
+import { View, TextInput, Button, KeyboardAvoidingView, ScrollView, Platform, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -7,6 +7,9 @@ import { useToast } from '../contexts/ToastContext';
 import { validateSecret } from '../utils/validateSecret';
 import { validateLabel } from '../utils/validateLabel';
 import TotpError from './TotpError';
+import { ThemedView } from './ThemedView';
+import { ThemedText } from './ThemedText';
+import { useThemeColor } from '../hooks/useThemeColor';
 
 type Props = {
   onSave: (payload: { accountName: string; issuer?: string; secret: string; icon?: string }) => Promise<void> | void;
@@ -24,6 +27,10 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
   const [validationErrors, setValidationErrors] = useState<string[] | null>(null);
 
   const { show } = useToast();
+  
+  const inputBackgroundColor = useThemeColor({}, 'inputBackground');
+  const inputBorderColor = useThemeColor({}, 'inputBorder');
+  const textColor = useThemeColor({}, 'text');
 
   useEffect(() => {
     if (initial) {
@@ -52,33 +59,36 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
         contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}
         keyboardShouldPersistTaps="handled"
       >
-  {allowSecretEdit ? <Text style={{ fontWeight: 'bold', marginBottom: 8 }}>Manual Entry</Text> : null}
+  {allowSecretEdit ? <ThemedText style={{ fontWeight: 'bold', marginBottom: 8 }}>Manual Entry</ThemedText> : null}
         <TextInput
-          style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
+          style={{ borderWidth: 1, borderColor: inputBorderColor, backgroundColor: inputBackgroundColor, color: textColor, borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
           placeholder="Account Name"
+          placeholderTextColor={inputBorderColor}
           value={manualAccountName}
           onChangeText={(t) => { setManualAccountName(t); setValidationErrors(null); }}
         />
         <TextInput
-          style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
+          style={{ borderWidth: 1, borderColor: inputBorderColor, backgroundColor: inputBackgroundColor, color: textColor, borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
           placeholder="Issuer (optional)"
+          placeholderTextColor={inputBorderColor}
           value={manualIssuer}
           onChangeText={(t) => { setManualIssuer(t); setValidationErrors(null); }}
         />
         {/** If allowSecretEdit is false, don't show the secret at all. Otherwise show the editable input. */}
         {allowSecretEdit ? (
           <TextInput
-            style={{ borderWidth: 1, borderColor: '#ccc', borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
+            style={{ borderWidth: 1, borderColor: inputBorderColor, backgroundColor: inputBackgroundColor, color: textColor, borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
             placeholder="Secret"
+            placeholderTextColor={inputBorderColor}
             value={manualSecret}
             onChangeText={(t) => { setManualSecret(t); setValidationErrors(null); }}
             autoCapitalize="none"
           />
         ) : null}
         {/* Icon picker: allow user to select an image from device when adding/editing */}
-        <View style={{ marginTop: 8, alignItems: 'center' }}>
+        <ThemedView style={{ marginTop: 8, alignItems: 'center' }}>
           {manualIcon ? (
-            <View style={{ alignItems: 'center' }}>
+            <ThemedView style={{ alignItems: 'center' }}>
               <Image source={{ uri: manualIcon }} style={{ width: 64, height: 64, borderRadius: 6, marginBottom: 8 }} />
               <Button title="Clear Icon" onPress={async () => {
                 try {
@@ -88,7 +98,7 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
                 } catch (e) { /* ignore */ }
                 setManualIcon(undefined);
               }} />
-            </View>
+            </ThemedView>
           ) : (
             <Button
               title="Choose Icon"
@@ -100,7 +110,7 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
                     return;
                   }
                   const res = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsEditing: true, quality: 0.7 });
-                  if (!res.cancelled) {
+                  if (!res.canceled) {
                     // Note: older expo-image-picker returns an object with `uri` and `cancelled`; newer returns `assets`.
                     // Handle both shapes for compatibility.
                     // @ts-ignore
@@ -130,7 +140,7 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
               }}
             />
           )}
-        </View>
+        </ThemedView>
         {validationErrors ? <TotpError errors={validationErrors} /> : null}
         <Button
           testID="manual-save"
