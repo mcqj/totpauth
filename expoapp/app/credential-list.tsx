@@ -1,18 +1,25 @@
 import { useState, useCallback } from 'react';
 import { useFocusEffect, useRouter, Stack } from 'expo-router';
-import { View, Text, FlatList, Pressable } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { FlatList, Pressable } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { useCredentialsContext } from '../contexts/CredentialsContext';
 import ConfirmModal from '../components/ConfirmModal';
 import { useToast } from '../contexts/ToastContext';
 import CredentialCard from '../components/CredentialCard';
+import { ThemedView } from '../components/ThemedView';
+import { ThemedText } from '../components/ThemedText';
+import { ThemedSafeAreaView } from '../components/ThemedSafeAreaView';
+import { useThemeColor } from '../hooks/useThemeColor';
 
 export default function CredentialListScreen() {
   const { credentials, loading, remove, reload } = useCredentialsContext();
   const router = useRouter();
   const { show } = useToast();
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+  
+  const iconColor = useThemeColor({}, 'editButton');
+  const headerBackgroundColor = useThemeColor({}, 'background');
+  const headerTextColor = useThemeColor({}, 'text');
 
   useFocusEffect(
     useCallback(() => {
@@ -35,26 +42,33 @@ export default function CredentialListScreen() {
   const handleCancelDelete = () => setPendingDelete(null);
 
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']} className="flex-1">
-      <View className="flex-1 bg-white">
+    <ThemedSafeAreaView edges={['bottom', 'left', 'right']} style={{ flex: 1 }}>
+      <ThemedView style={{ flex: 1 }}>
         <Stack.Screen
           options={{
             title: 'Credentials',
+            headerStyle: {
+              backgroundColor: headerBackgroundColor,
+            },
+            headerTintColor: headerTextColor,
+            headerTitleStyle: {
+              color: headerTextColor,
+            },
               headerRight: () => (
               <Pressable
                 onPress={() => router.push('/add-credential')}
                 accessibilityLabel="Add Credential"
-                className="mr-4"
+                style={{ marginRight: 16 }}
               >
-                <FontAwesome name="plus" size={28} color="#2563EB" />
+                <FontAwesome name="plus" size={28} color={iconColor} />
               </Pressable>
             ),
           }}
         />
         {loading ? (
-          <Text className="text-center mt-8">Loading...</Text>
+          <ThemedText style={{ textAlign: 'center', marginTop: 32 }}>Loading...</ThemedText>
         ) : credentials.length === 0 ? (
-          <Text className="text-center mt-8">No credentials saved.</Text>
+          <ThemedText style={{ textAlign: 'center', marginTop: 32 }}>No credentials saved.</ThemedText>
         ) : (
           <FlatList
             data={credentials}
@@ -77,7 +91,7 @@ export default function CredentialListScreen() {
           onConfirm={handleConfirmDelete}
           onCancel={handleCancelDelete}
         />
-      </View>
-    </SafeAreaView>
+      </ThemedView>
+    </ThemedSafeAreaView>
   );
 }

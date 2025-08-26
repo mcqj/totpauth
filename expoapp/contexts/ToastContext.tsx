@@ -1,5 +1,6 @@
 import { createContext, useContext, ReactNode, useState, useCallback, useRef } from 'react';
 import { View, Text, Animated, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { useColorScheme } from '../hooks/useColorScheme';
 
 type ToastOptions = { type?: 'success' | 'error' | 'info'; duration?: number };
 
@@ -12,6 +13,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const [type, setType] = useState<'success' | 'error' | 'info'>('info');
   const timerRef = useRef<number | null>(null);
   const opacity = useRef(new Animated.Value(0)).current;
+  const colorScheme = useColorScheme();
 
   const hide = useCallback(() => {
     Animated.timing(opacity, { toValue: 0, duration: 200, useNativeDriver: true }).start(() => {
@@ -41,7 +43,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {message ? (
         <Animated.View style={[styles.container, { opacity }] } pointerEvents="box-none">
           <TouchableWithoutFeedback onPress={hide}>
-            <View style={[styles.toast, type === 'error' ? styles.error : type === 'success' ? styles.success : styles.info]}>
+            <View style={[styles.toast, getToastStyle(type, colorScheme ?? 'light')]}>
               <Text style={styles.text}>{message}</Text>
             </View>
           </TouchableWithoutFeedback>
@@ -55,6 +57,19 @@ export function useToast() {
   const ctx = useContext(ToastContext);
   if (!ctx) throw new Error('useToast must be used within a ToastProvider');
   return ctx;
+}
+
+function getToastStyle(type: 'success' | 'error' | 'info', colorScheme: 'light' | 'dark' | null) {
+  const isDark = colorScheme === 'dark';
+  
+  switch (type) {
+    case 'error':
+      return { backgroundColor: '#d9534f' };
+    case 'success':
+      return { backgroundColor: '#5cb85c' };
+    default:
+      return { backgroundColor: isDark ? '#444' : '#333' };
+  }
 }
 
 const styles = StyleSheet.create({
@@ -79,7 +94,4 @@ const styles = StyleSheet.create({
   text: {
     color: '#fff',
   },
-  error: { backgroundColor: '#d9534f' },
-  success: { backgroundColor: '#5cb85c' },
-  info: { backgroundColor: '#333' },
 });
