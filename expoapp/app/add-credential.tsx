@@ -9,12 +9,16 @@ import TotpError from '../components/TotpError';
 import { useCredentialsContext } from '../contexts/CredentialsContext';
 import { ThemedView } from '../components/ThemedView';
 import { ThemedText } from '../components/ThemedText';
+import { useThemeColor } from '../hooks/useThemeColor';
 
 export default function AddCredentialScreen() {
   const [scanned, setScanned] = useState(false);
   const [qrData, setQrData] = useState<string | null>(null);
   const [manualMode, setManualMode] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
+
+  const headerBackgroundColor = useThemeColor({}, 'background');
+  const headerTextColor = useThemeColor({}, 'text');
 
   const handleBarCodeScanned = ({ data }: { data: string }) => {
     if (!scanned) {
@@ -60,7 +64,16 @@ export default function AddCredentialScreen() {
 
   return (
     <ThemedView style={{ flex: 1 }}>
-      <Stack.Screen options={{ title: editingKey ? 'Edit Credential' : 'Add Credential' }} />
+      <Stack.Screen options={{ 
+        title: editingKey ? 'Edit Credential' : 'Add Credential',
+        headerStyle: {
+          backgroundColor: headerBackgroundColor,
+        },
+        headerTintColor: headerTextColor,
+        headerTitleStyle: {
+          color: headerTextColor,
+        },
+      }} />
       <ThemedText style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginTop: 16 }}>{editingKey ? 'Edit Credential' : 'Add Credential'}</ThemedText>
       {!showCamera && !manualMode ? (
         <ThemedView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>

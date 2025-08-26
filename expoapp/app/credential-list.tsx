@@ -18,6 +18,8 @@ export default function CredentialListScreen() {
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
   
   const iconColor = useThemeColor({}, 'editButton');
+  const headerBackgroundColor = useThemeColor({}, 'background');
+  const headerTextColor = useThemeColor({}, 'text');
 
   useFocusEffect(
     useCallback(() => {
@@ -45,6 +47,13 @@ export default function CredentialListScreen() {
         <Stack.Screen
           options={{
             title: 'Credentials',
+            headerStyle: {
+              backgroundColor: headerBackgroundColor,
+            },
+            headerTintColor: headerTextColor,
+            headerTitleStyle: {
+              color: headerTextColor,
+            },
               headerRight: () => (
               <Pressable
                 onPress={() => router.push('/add-credential')}
