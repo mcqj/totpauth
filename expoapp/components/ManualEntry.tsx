@@ -56,19 +56,19 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
       keyboardVerticalOffset={80}
     >
       <ScrollView
-        contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center' }}
+        contentContainerStyle={{ flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 16 }}
         keyboardShouldPersistTaps="handled"
       >
   {allowSecretEdit ? <ThemedText style={{ fontWeight: 'bold', marginBottom: 8 }}>Manual Entry</ThemedText> : null}
         <TextInput
-          style={{ borderWidth: 1, borderColor: inputBorderColor, backgroundColor: inputBackgroundColor, color: textColor, borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
+          style={{ borderWidth: 1, borderColor: inputBorderColor, backgroundColor: inputBackgroundColor, color: textColor, borderRadius: 6, padding: 8, marginBottom: 8, width: '100%', maxWidth: 400, minWidth: 240 }}
           placeholder="Account Name"
           placeholderTextColor={inputBorderColor}
           value={manualAccountName}
           onChangeText={(t) => { setManualAccountName(t); setValidationErrors(null); }}
         />
         <TextInput
-          style={{ borderWidth: 1, borderColor: inputBorderColor, backgroundColor: inputBackgroundColor, color: textColor, borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
+          style={{ borderWidth: 1, borderColor: inputBorderColor, backgroundColor: inputBackgroundColor, color: textColor, borderRadius: 6, padding: 8, marginBottom: 8, width: '100%', maxWidth: 400, minWidth: 240 }}
           placeholder="Issuer (optional)"
           placeholderTextColor={inputBorderColor}
           value={manualIssuer}
@@ -77,7 +77,7 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
         {/** If allowSecretEdit is false, don't show the secret at all. Otherwise show the editable input. */}
         {allowSecretEdit ? (
           <TextInput
-            style={{ borderWidth: 1, borderColor: inputBorderColor, backgroundColor: inputBackgroundColor, color: textColor, borderRadius: 6, padding: 8, marginBottom: 8, width: 240 }}
+            style={{ borderWidth: 1, borderColor: inputBorderColor, backgroundColor: inputBackgroundColor, color: textColor, borderRadius: 6, padding: 8, marginBottom: 8, width: '100%', maxWidth: 400, minWidth: 240 }}
             placeholder="Secret"
             placeholderTextColor={inputBorderColor}
             value={manualSecret}

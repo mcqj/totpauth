@@ -15,6 +15,7 @@ This is a secure, open-source Expo app for generating Time-based One-Time Passwo
 - Fully offline, no cloud sync or backup
 - Accessible UI, supports screen readers and color contrast
 - Cross-platform: iOS and Android (Expo-managed)
+- Supports both portrait and landscape orientations
 
 ---
 
