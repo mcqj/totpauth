@@ -154,4 +154,23 @@ world test to validate the installation. It circled again so I stopped it and re
 added unit testing manually by following the simple concise instructions on the web page and I didn't
 have any issue so not sure why copilot couldn't make it work. Once I had the harness in place, I asked
 it to propose a single test an implement and that went OK. The second test resulted in some infinite
-rendering but it was able to fix that issue with only a couple of iterations.
+rendering but it was able to fix that issue with only a couple of iterations. Since then, further test
+have been added and they have been easier to deal with.
+
+**Further Additions** have included:
+- editing of the credenials
+- the addition of an icon to each credential witn the ability to add that from the device's libraries
+- replacing alerts with custom dialogs
+- various issue fixes
+- refactoring for cleanup
+
+**Working with Copilot in Github UI**
+- Got github to create some issues - give high level and github adds useful detail
+- Assigned small issue to github copilot initially - worked well
+- Assigned larger issue - add dark mode to the App. Copilot took the task and proceeded independently.
+It made a pull request and I reviewed that. It did a good job setting up a full theming framework.
+There were some issues with the background colour not being implemented everywhere. I provided feedback
+through comments and it actioned those. There was still an issue and I had soem difficulty getting it
+to pick up the task again. I had to comment several times but it did eventually pick up the pull
+request again and fix things.
+
