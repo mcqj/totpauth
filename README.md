@@ -95,9 +95,19 @@ This is a secure, open-source Expo app for generating Time-based One-Time Passwo
 3. Follow the [tech spec](docs/totp-authenticator-techspec.md) for implementation details
 4. Run tests:
 	```bash
+	cd expoapp
 	npm test
 	```
 5. Submit pull requests for improvements or bug fixes
+
+### CI/CD Status
+
+This repository includes automated CI/CD that runs on all pushes and pull requests:
+
+- **Lint checks**: Ensures code quality and style consistency
+- **Unit tests**: Validates functionality (currently 25 tests across 11 test suites)
+
+All CI checks must pass before merging. Check the GitHub Actions tab for the latest build status and any failures.
 
 ---
 
