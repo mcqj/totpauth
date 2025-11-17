@@ -44,8 +44,8 @@ export default function useCredentials() {
     // move/copy it to a canonical path based on the key to avoid leaving temp files.
     let credToStore: Omit<Credential, '_key'> = { ...cred };
     try {
-      if (cred.icon && FileSystem.documentDirectory && cred.icon.startsWith(FileSystem.documentDirectory)) {
-        const iconsDir = `${FileSystem.documentDirectory}icons`;
+      if (cred.icon && (FileSystem as any).documentDirectory && cred.icon.startsWith((FileSystem as any).documentDirectory)) {
+        const iconsDir = `${(FileSystem as any).documentDirectory}icons`;
         try { await FileSystem.makeDirectoryAsync(iconsDir, { intermediates: true }); } catch (e) { /* ignore */ }
         const dest = `${iconsDir}/${key}.jpg`;
         try {
@@ -77,7 +77,7 @@ export default function useCredentials() {
       if (raw) {
         try {
           const parsed = JSON.parse(raw) as Credential;
-          if (parsed.icon && FileSystem.documentDirectory && parsed.icon.startsWith(FileSystem.documentDirectory)) {
+          if (parsed.icon && (FileSystem as any).documentDirectory && parsed.icon.startsWith((FileSystem as any).documentDirectory)) {
             try { await FileSystem.deleteAsync(parsed.icon); } catch (e) { /* ignore */ }
           }
         } catch (e) { /* ignore parse errors */ }
@@ -104,8 +104,8 @@ export default function useCredentials() {
     // move it to a canonical path based on the new key to avoid accumulating timestamped files.
     let credToStore: Omit<Credential, '_key'> = { ...cred };
     try {
-      if (cred.icon && FileSystem.documentDirectory && cred.icon.startsWith(FileSystem.documentDirectory)) {
-        const iconsDir = `${FileSystem.documentDirectory}icons`;
+      if (cred.icon && (FileSystem as any).documentDirectory && cred.icon.startsWith((FileSystem as any).documentDirectory)) {
+        const iconsDir = `${(FileSystem as any).documentDirectory}icons`;
         try { await FileSystem.makeDirectoryAsync(iconsDir, { intermediates: true }); } catch (e) { /* ignore */ }
         const dest = `${iconsDir}/${newKey}.jpg`;
         try {
@@ -141,7 +141,7 @@ export default function useCredentials() {
         if (oldRaw) {
           try {
             const oldParsed = JSON.parse(oldRaw) as Credential;
-            if (oldParsed.icon && FileSystem.documentDirectory && oldParsed.icon.startsWith(FileSystem.documentDirectory)) {
+            if (oldParsed.icon && (FileSystem as any).documentDirectory && oldParsed.icon.startsWith((FileSystem as any).documentDirectory)) {
               // don't delete the file if it's the same as the newly stored icon
               if (!credToStore.icon || oldParsed.icon !== credToStore.icon) {
                 try { await FileSystem.deleteAsync(oldParsed.icon); } catch (e) { /* ignore */ }

@@ -24,10 +24,10 @@ describe('Dark Mode Color System', () => {
     const requiredColors = ['text', 'background', 'tint', 'icon', 'border', 'cardBackground'];
     
     requiredColors.forEach(color => {
-      expect(Colors.light[color]).toBeDefined();
-      expect(Colors.dark[color]).toBeDefined();
-      expect(typeof Colors.light[color]).toBe('string');
-      expect(typeof Colors.dark[color]).toBe('string');
+      expect((Colors as any).light[color]).toBeDefined();
+      expect((Colors as any).dark[color]).toBeDefined();
+      expect(typeof (Colors as any).light[color]).toBe('string');
+      expect(typeof (Colors as any).dark[color]).toBe('string');
     });
   });
 
@@ -121,14 +121,14 @@ describe('Dark Mode Color System', () => {
     ];
 
     newThemeColors.forEach(colorKey => {
-      expect(Colors.light[colorKey]).toBeDefined();
-      expect(Colors.dark[colorKey]).toBeDefined();
-      expect(typeof Colors.light[colorKey]).toBe('string');
-      expect(typeof Colors.dark[colorKey]).toBe('string');
+      expect((Colors as any).light[colorKey]).toBeDefined();
+      expect((Colors as any).dark[colorKey]).toBeDefined();
+      expect(typeof (Colors as any).light[colorKey]).toBe('string');
+      expect(typeof (Colors as any).dark[colorKey]).toBe('string');
       
       // Ensure colors are valid hex/rgba strings
-      const lightColor = Colors.light[colorKey];
-      const darkColor = Colors.dark[colorKey];
+      const lightColor = (Colors as any).light[colorKey];
+      const darkColor = (Colors as any).dark[colorKey];
       
       expect(lightColor).toMatch(/^(#[0-9a-fA-F]{3,8}|rgba?\(|[a-zA-Z]+).*$/);
       expect(darkColor).toMatch(/^(#[0-9a-fA-F]{3,8}|rgba?\(|[a-zA-Z]+).*$/);
