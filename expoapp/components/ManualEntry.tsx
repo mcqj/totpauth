@@ -92,7 +92,7 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
               <Image source={{ uri: manualIcon }} style={{ width: 64, height: 64, borderRadius: 6, marginBottom: 8 }} />
               <Button title="Clear Icon" onPress={async () => {
                 try {
-                  if (manualIcon && FileSystem.documentDirectory && manualIcon.startsWith(FileSystem.documentDirectory)) {
+                  if (manualIcon && (FileSystem as any).documentDirectory && manualIcon.startsWith((FileSystem as any).documentDirectory)) {
                     try { await FileSystem.deleteAsync(manualIcon); } catch (e) { /* ignore */ }
                   }
                 } catch (e) { /* ignore */ }
@@ -124,7 +124,7 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
                           { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
                         );
 
-                        const iconsDir = `${FileSystem.documentDirectory}icons`;
+                        const iconsDir = `${(FileSystem as any).documentDirectory}icons`;
                         try { await FileSystem.makeDirectoryAsync(iconsDir, { intermediates: true }); } catch (e) { /* ignore if exists */ }
                         const dest = `${iconsDir}/icon_${Date.now()}.jpg`;
                         await FileSystem.copyAsync({ from: manipulated.uri, to: dest });
