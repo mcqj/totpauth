@@ -5,13 +5,23 @@
   "build": {
     "preview": {
       "distribution": "internal",
+      "env": {
+        "NPM_CONFIG_LEGACY_PEER_DEPS": "true",
+        "NODE_VERSION": "24"
+      },
       "android": {
-        "buildType": "apk"
+        "buildType": "apk",
+        "credentialsSource": "remote"
       }
     },
     "production": {
+      "env": {
+        "NPM_CONFIG_LEGACY_PEER_DEPS": "true",
+        "NODE_VERSION": "24"
+      },
       "android": {
-        "buildType": "app-bundle"
+        "buildType": "app-bundle",
+        "credentialsSource": "remote"
       }
     }
   }
