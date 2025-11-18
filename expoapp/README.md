@@ -54,3 +54,56 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+## Rebuild & Install (EAS)
+
+Use EAS to build signed Android artifacts (APK for testing, AAB for Play).
+
+1. Install `eas-cli` and login:
+
+```bash
+npm install -g eas-cli
+cd expoapp
+eas login
+```
+
+2. Configure EAS (one-time):
+
+```bash
+cd expoapp
+eas build:configure
+```
+
+3. Start a preview APK build (fast, installable):
+
+```bash
+cd expoapp
+eas build -p android --profile preview
+```
+
+4. Download the finished artifact (or use the build page link):
+
+```bash
+eas build:list --platform android
+eas build:download --platform android --id <BUILD_ID>
+```
+
+5. Install on a connected Android device (use `adb devices` to list):
+
+```bash
+adb install -r path/to/app-release.apk
+# if signing conflict:
+adb uninstall com.mcqj.totpauth
+adb install path/to/app-release.apk
+```
+
+6. Backup keystore (if EAS generated it):
+
+```bash
+cd expoapp
+eas credentials -p android --download-keystore
+```
+
+Notes:
+- The `preview` profile in `expoapp/eas.json` is configured to set `NPM_CONFIG_LEGACY_PEER_DEPS=true` so builds match local `npm` behavior.
+- Use `production` profile to build an AAB for Google Play.
