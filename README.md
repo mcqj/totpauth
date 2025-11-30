@@ -111,6 +111,17 @@ All CI checks must pass before merging. Check the GitHub Actions tab for the lat
 
 ---
 
+## Manual Validation
+
+This site allows you to scan QR codes and check the TOPTP codes the App is generating.
+
+https://authenticationtest.com/
+
+This site is useful to get TOTP codes against which you can compare those generated
+by the App.
+
+---
+
 ## License
 
 MIT License. See [LICENSE](LICENSE) for details.

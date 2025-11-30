@@ -85,7 +85,7 @@ eas build -p android --profile preview
 
 ```bash
 eas build:list --platform android
-eas build:download --platform android --id <BUILD_ID>
+eas build:download --platform android --fingerprint <BUILD_FINGERPRINT>
 ```
 
 5. Install on a connected Android device (use `adb devices` to list):
