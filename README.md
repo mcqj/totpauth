@@ -111,6 +111,37 @@ All CI checks must pass before merging. Check the GitHub Actions tab for the lat
 
 ---
 
+## Building an APK (EAS)
+
+Follow these steps to produce a standalone Android APK using EAS (Expo Application Services). This produces an installable APK that uses your app name and icon (unlike Expo Go).
+
+- Ensure `expoapp/app.json` has the correct `name`, `icon`, and `android.package`.
+- Log in to Expo and configure EAS if you haven't already:
+	```bash
+	cd expoapp
+	npx eas login
+	npx eas build:configure
+	```
+- Start a preview APK build (preview profile produces an APK):
+	```bash
+	cd expoapp
+	eas build -p android --profile preview
+	```
+- After the build completes, list and download the artifact:
+	```bash
+	eas build:list --platform android
+	eas build:download --platform android --id <BUILD_ID>
+	```
+- Install on a connected device (replace path with downloaded APK path):
+	```bash
+	adb install -r ./app-release.apk
+	```
+
+Notes:
+- If you need a development client with your icon/name for debugging, build using a `development` profile instead of `preview`.
+- If you encounter dependency install errors on EAS, make sure `expoapp/eas.json` sets `NPM_CONFIG_LEGACY_PEER_DEPS` and `NODE_VERSION` appropriately (this repo uses `NODE_VERSION=24` and `NPM_CONFIG_LEGACY_PEER_DEPS=true`).
+
+
 ## Manual Validation
 
 This site allows you to scan QR codes and check the TOPTP codes the App is generating.
@@ -119,6 +150,8 @@ https://authenticationtest.com/
 
 This site is useful to get TOTP codes against which you can compare those generated
 by the App.
+
+https://localtotp.com/
 
 ---
 
