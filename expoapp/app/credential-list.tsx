@@ -64,6 +64,14 @@ export default function CredentialListScreen() {
     return trail;
   }, [currentFolderId, folders]);
 
+  // Combine folders and credentials for display
+  const combinedList = useMemo(() => {
+    return [
+      ...currentFolders.map(f => ({ type: 'folder' as const, data: f })),
+      ...currentCredentials.map(c => ({ type: 'credential' as const, data: c }))
+    ];
+  }, [currentFolders, currentCredentials]);
+
   const confirmDeleteCredential = (key: string) => setPendingDeleteCredential(key);
   const handleConfirmDeleteCredential = async () => {
     if (!pendingDeleteCredential) return;
@@ -192,7 +200,7 @@ export default function CredentialListScreen() {
 
         {loading ? (
           <ThemedText style={{ textAlign: 'center', marginTop: 32 }}>Loading...</ThemedText>
-        ) : currentFolders.length === 0 && currentCredentials.length === 0 ? (
+        ) : combinedList.length === 0 ? (
           <ThemedView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <ThemedText style={{ textAlign: 'center', marginTop: 32 }}>
               {currentFolderId ? 'This folder is empty.' : 'No folders or credentials saved.'}
@@ -203,7 +211,7 @@ export default function CredentialListScreen() {
           </ThemedView>
         ) : (
           <FlatList
-            data={[...currentFolders.map(f => ({ type: 'folder' as const, data: f })), ...currentCredentials.map(c => ({ type: 'credential' as const, data: c }))]}
+            data={combinedList}
             keyExtractor={(item) => item.type === 'folder' ? item.data.id : item.data._key || item.data.accountName}
             renderItem={({ item }) => {
               if (item.type === 'folder') {
