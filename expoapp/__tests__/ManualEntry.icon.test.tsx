@@ -8,6 +8,19 @@ jest.mock('../contexts/ToastContext', () => ({
   useToast: () => ({ show: jest.fn() }),
 }));
 
+// Mock the folders context
+jest.mock('../contexts/FoldersContext', () => ({
+  FoldersProvider: ({ children }: any) => children,
+  useFoldersContext: () => ({
+    folders: [],
+    loading: false,
+    add: jest.fn(),
+    remove: jest.fn(),
+    update: jest.fn(),
+    reload: jest.fn(),
+  }),
+}));
+
 // Mock expo-image-picker to return a fake uri when launched
 jest.mock('expo-image-picker', () => ({
   requestMediaLibraryPermissionsAsync: jest.fn(async () => ({ status: 'granted' })),

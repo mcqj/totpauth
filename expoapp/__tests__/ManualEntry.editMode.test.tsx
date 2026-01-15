@@ -8,6 +8,19 @@ jest.mock('../contexts/ToastContext', () => ({
   useToast: () => ({ show: jest.fn() }),
 }));
 
+// Mock the folders context
+jest.mock('../contexts/FoldersContext', () => ({
+  FoldersProvider: ({ children }: any) => children,
+  useFoldersContext: () => ({
+    folders: [],
+    loading: false,
+    add: jest.fn(),
+    remove: jest.fn(),
+    update: jest.fn(),
+    reload: jest.fn(),
+  }),
+}));
+
 describe('ManualEntry edit mode', () => {
   /*
    * NOTE: This test is flaky in the current test harness and intermittently
