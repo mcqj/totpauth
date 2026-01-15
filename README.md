@@ -7,15 +7,15 @@ This is a secure, open-source Expo app for generating Time-based One-Time Passwo
 
 ## Features
 
-- Add new TOTP credentials by scanning QR codes (using device camera)
-- Manual credential entry as a fallback
-- List all saved credentials with live, auto-updating TOTP codes
-- Delete credentials securely
-- All secrets stored securely on device (Expo SecureStore)
-- Fully offline, no cloud sync or backup
-- Accessible UI, supports screen readers and color contrast
-- Cross-platform: iOS and Android (Expo-managed)
-- Supports both portrait and landscape orientations
+- **TOTP Code Generation:** Add new TOTP credentials by scanning QR codes (using device camera) or manual entry
+- **Folder Organization:** Create folders and sub-folders to organize your credentials hierarchically
+- **Custom Icons:** Add custom avatars/icons to both credentials and folders for easy identification
+- **Live Codes:** View all saved credentials with live, auto-updating TOTP codes that refresh every 30 seconds
+- **Secure Storage:** All secrets stored securely on device using Expo SecureStore
+- **Fully Offline:** No cloud sync or backup required - everything stays on your device
+- **Cross-platform:** Works on both iOS and Android (Expo-managed)
+- **Accessible:** Supports screen readers, color contrast, and both portrait/landscape orientations
+- **Dark Mode:** Full support for light and dark color schemes
 
 ---
 
@@ -47,13 +47,47 @@ This is a secure, open-source Expo app for generating Time-based One-Time Passwo
 
 ## Usage
 
-1. **Add Credential:**
-	- Tap "Add Application" to scan a QR code or enter details manually.
-	- The app parses standard TOTP QR codes (otpauth:// URIs).
-2. **View Codes:**
-	- All saved credentials are listed with their current TOTP code, which updates every 30 seconds.
-3. **Delete Credential:**
-	- Tap "Delete" on a credential to remove it from your device.
+### Adding Credentials
+1. **Scan QR Code:**
+	- Tap the "+" icon in the top right of the main screen
+	- Choose "Scan QR Code" and point your camera at the TOTP QR code
+	- The app automatically parses standard TOTP QR codes (otpauth:// URIs)
+
+2. **Manual Entry:**
+	- Tap the "+" icon and choose "Enter Manually"
+	- Fill in the account name, issuer, and secret key
+	- Optionally select a folder and custom icon
+	- Tap "Save Manual Entry"
+
+### Organizing with Folders
+1. **Create a Folder:**
+	- Tap the folder icon in the top right of the main screen
+	- Enter a name for your folder
+	- Optionally add a custom avatar image
+	- Create sub-folders by navigating into a folder first, then creating a new one
+
+2. **Assign Credentials to Folders:**
+	- When adding or editing a credential, use the "Folder (optional)" picker
+	- Select a folder or leave as "No folder (root)" for the main view
+
+3. **Navigate Folders:**
+	- Tap on a folder to view its contents
+	- Use the breadcrumb trail at the top to navigate back
+	- Tap "Home" to return to the root view
+
+4. **Manage Folders:**
+	- Edit a folder by tapping the pencil icon next to it
+	- Delete empty folders by tapping the trash icon
+	- Folders containing credentials or sub-folders cannot be deleted
+
+### Viewing and Using Codes
+- All credentials are listed with their current TOTP code
+- Codes automatically update every 30 seconds
+- The countdown timer shows how long until the next code refresh
+
+### Editing and Deleting
+- **Edit:** Tap the pencil icon next to a credential to modify its details
+- **Delete:** Tap the trash icon to remove a credential (requires confirmation)
 
 ---
 

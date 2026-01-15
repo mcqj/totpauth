@@ -152,7 +152,7 @@ export default function FolderModal({ visible, folder, parentFolderId, onSave, o
                   opacity: !name.trim() ? 0.5 : 1,
                 }]}
               >
-                <ThemedText style={{ color: pressed ? textColor : '#fff', fontWeight: 'bold' }}>
+                <ThemedText style={{ color: '#fff', fontWeight: 'bold' }}>
                   {folder ? 'Save' : 'Create'}
                 </ThemedText>
               </Pressable>
