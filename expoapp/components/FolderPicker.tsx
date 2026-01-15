@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Modal, Pressable, FlatList, ScrollView } from 'react-native';
+import { Modal, Pressable, FlatList } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { ThemedView } from './ThemedView';
 import { ThemedText } from './ThemedText';
@@ -60,68 +60,69 @@ export default function FolderPicker({ folders, selectedFolderId, onSelect, labe
               {label}
             </ThemedText>
             
-            <ScrollView style={{ maxHeight: 400 }}>
-              <Pressable
-                onPress={() => handleSelect(undefined)}
-                style={({ pressed }) => [{
-                  padding: 12,
-                  borderRadius: 8,
-                  marginBottom: 8,
-                  backgroundColor: !selectedFolderId ? buttonColor : (pressed ? pressedBackground : backgroundColor),
-                  borderWidth: 1,
-                  borderColor: !selectedFolderId ? buttonColor : borderColor,
-                }]}
-              >
-                <ThemedText style={{ color: !selectedFolderId ? '#fff' : textColor }}>
-                  No folder (root)
-                </ThemedText>
-              </Pressable>
-
-              <FlatList
-                data={folders}
-                keyExtractor={(item) => item.id}
-                renderItem={({ item }) => (
-                  <Pressable
-                    onPress={() => handleSelect(item.id)}
-                    style={({ pressed }) => [{
-                      padding: 12,
-                      borderRadius: 8,
-                      marginBottom: 8,
-                      backgroundColor: selectedFolderId === item.id ? buttonColor : (pressed ? pressedBackground : backgroundColor),
-                      borderWidth: 1,
-                      borderColor: selectedFolderId === item.id ? buttonColor : borderColor,
-                    }]}
-                  >
-                    <ThemedView style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <FontAwesome 
-                        name="folder" 
-                        size={20} 
-                        color={selectedFolderId === item.id ? '#fff' : buttonColor} 
-                        style={{ marginRight: 12 }} 
-                      />
-                      <ThemedText style={{ color: selectedFolderId === item.id ? '#fff' : textColor }}>
-                        {item.name}
-                      </ThemedText>
-                    </ThemedView>
-                  </Pressable>
-                )}
-              />
-            </ScrollView>
-
-            <Pressable
-              onPress={() => setShowModal(false)}
-              style={({ pressed }) => [{
-                marginTop: 16,
-                padding: 12,
-                borderRadius: 8,
-                borderWidth: 1,
-                borderColor,
-                alignItems: 'center',
-                backgroundColor: pressed ? pressedBackground : backgroundColor,
-              }]}
-            >
-              <ThemedText>Close</ThemedText>
-            </Pressable>
+            <FlatList
+              data={folders}
+              keyExtractor={(item) => item.id}
+              style={{ maxHeight: 400 }}
+              ListHeaderComponent={
+                <Pressable
+                  onPress={() => handleSelect(undefined)}
+                  style={({ pressed }) => [{
+                    padding: 12,
+                    borderRadius: 8,
+                    marginBottom: 8,
+                    backgroundColor: !selectedFolderId ? buttonColor : (pressed ? pressedBackground : backgroundColor),
+                    borderWidth: 1,
+                    borderColor: !selectedFolderId ? buttonColor : borderColor,
+                  }]}
+                >
+                  <ThemedText style={{ color: !selectedFolderId ? '#fff' : textColor }}>
+                    No folder (root)
+                  </ThemedText>
+                </Pressable>
+              }
+              renderItem={({ item }) => (
+                <Pressable
+                  onPress={() => handleSelect(item.id)}
+                  style={({ pressed }) => [{
+                    padding: 12,
+                    borderRadius: 8,
+                    marginBottom: 8,
+                    backgroundColor: selectedFolderId === item.id ? buttonColor : (pressed ? pressedBackground : backgroundColor),
+                    borderWidth: 1,
+                    borderColor: selectedFolderId === item.id ? buttonColor : borderColor,
+                  }]}
+                >
+                  <ThemedView style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <FontAwesome 
+                      name="folder" 
+                      size={20} 
+                      color={selectedFolderId === item.id ? '#fff' : buttonColor} 
+                      style={{ marginRight: 12 }} 
+                    />
+                    <ThemedText style={{ color: selectedFolderId === item.id ? '#fff' : textColor }}>
+                      {item.name}
+                    </ThemedText>
+                  </ThemedView>
+                </Pressable>
+              )}
+              ListFooterComponent={
+                <Pressable
+                  onPress={() => setShowModal(false)}
+                  style={({ pressed }) => [{
+                    marginTop: 16,
+                    padding: 12,
+                    borderRadius: 8,
+                    borderWidth: 1,
+                    borderColor,
+                    alignItems: 'center',
+                    backgroundColor: pressed ? pressedBackground : backgroundColor,
+                  }]}
+                >
+                  <ThemedText>Close</ThemedText>
+                </Pressable>
+              }
+            />
           </ThemedView>
         </ThemedView>
       </Modal>
