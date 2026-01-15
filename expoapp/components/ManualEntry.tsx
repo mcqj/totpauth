@@ -4,17 +4,19 @@ import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { useToast } from '../contexts/ToastContext';
+import { useFoldersContext } from '../contexts/FoldersContext';
 import { validateSecret } from '../utils/validateSecret';
 import { validateLabel } from '../utils/validateLabel';
 import TotpError from './TotpError';
+import FolderPicker from './FolderPicker';
 import { ThemedView } from './ThemedView';
 import { ThemedText } from './ThemedText';
 import { useThemeColor } from '../hooks/useThemeColor';
 
 type Props = {
-  onSave: (payload: { accountName: string; issuer?: string; secret: string; icon?: string }) => Promise<void> | void;
+  onSave: (payload: { accountName: string; issuer?: string; secret: string; icon?: string; folderId?: string }) => Promise<void> | void;
   onCancel?: () => void;
-  initial?: { accountName?: string; issuer?: string; secret?: string; icon?: string };
+  initial?: { accountName?: string; issuer?: string; secret?: string; icon?: string; folderId?: string };
   saveLabel?: string;
   allowSecretEdit?: boolean;
 };
@@ -24,9 +26,11 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
   const [manualIssuer, setManualIssuer] = useState(initial?.issuer || '');
   const [manualSecret, setManualSecret] = useState(initial?.secret || '');
   const [manualIcon, setManualIcon] = useState<string | undefined>(initial?.icon);
+  const [manualFolderId, setManualFolderId] = useState<string | undefined>(initial?.folderId);
   const [validationErrors, setValidationErrors] = useState<string[] | null>(null);
 
   const { show } = useToast();
+  const { folders } = useFoldersContext();
   
   const inputBackgroundColor = useThemeColor({}, 'inputBackground');
   const inputBorderColor = useThemeColor({}, 'inputBorder');
@@ -45,6 +49,7 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
   setManualIssuer(initial.issuer || '');
   setManualSecret(initial.secret || '');
   setManualIcon(initial.icon);
+  setManualFolderId(initial.folderId);
     }
   }, [initial]);
 
@@ -85,6 +90,15 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
             autoCapitalize="none"
           />
         ) : null}
+        {/* Folder picker: allow user to select a folder for organization */}
+        <ThemedView style={{ width: '100%', maxWidth: 400, minWidth: 240 }}>
+          <FolderPicker
+            folders={folders}
+            selectedFolderId={manualFolderId}
+            onSelect={(folderId) => setManualFolderId(folderId)}
+            label="Folder (optional)"
+          />
+        </ThemedView>
         {/* Icon picker: allow user to select an image from device when adding/editing */}
         <ThemedView style={{ marginTop: 8, alignItems: 'center' }}>
           {manualIcon ? (
@@ -176,7 +190,7 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
                   show('Cannot edit credential: original secret not available.', { type: 'error' });
                   return;
                 }
-                await onSave({ accountName: manualAccountName.trim(), issuer: manualIssuer.trim() || undefined, secret: secretToUse, icon: manualIcon });
+                await onSave({ accountName: manualAccountName.trim(), issuer: manualIssuer.trim() || undefined, secret: secretToUse, icon: manualIcon, folderId: manualFolderId });
                 setValidationErrors(null);
                 // Do not clear fields in edit mode (keep values stable)
               } else {
@@ -191,11 +205,12 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
                   return;
                 }
 
-                await onSave({ accountName: manualAccountName.trim(), issuer: manualIssuer.trim() || undefined, secret: normalized!, icon: manualIcon });
+                await onSave({ accountName: manualAccountName.trim(), issuer: manualIssuer.trim() || undefined, secret: normalized!, icon: manualIcon, folderId: manualFolderId });
                 setManualAccountName('');
                 setManualIssuer('');
                 setManualSecret('');
                 setManualIcon(undefined);
+                setManualFolderId(undefined);
                 setValidationErrors(null);
               }
             } catch (e) {

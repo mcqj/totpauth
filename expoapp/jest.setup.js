@@ -16,8 +16,8 @@ console.error = (...args) => {
       })
       .join(' ');
 
-    // Suppress variants of the noisy warning that mention CredentialsProvider
-    if (combined.includes('not wrapped in act') && combined.includes('CredentialsProvider')) {
+    // Suppress variants of the noisy warning that mention CredentialsProvider or FoldersProvider
+    if (combined.includes('not wrapped in act') && (combined.includes('CredentialsProvider') || combined.includes('FoldersProvider'))) {
       // suppress this specific noisy warning
       return;
     }
@@ -30,4 +30,16 @@ console.error = (...args) => {
 jest.mock('./contexts/ToastContext', () => ({
   ToastProvider: ({ children }) => children,
   useToast: () => ({ show: jest.fn() }),
+}));
+
+jest.mock('./hooks/useFolders', () => ({
+  __esModule: true,
+  default: jest.fn(() => ({
+    folders: [],
+    loading: false,
+    add: jest.fn(),
+    remove: jest.fn(),
+    update: jest.fn(),
+    reload: jest.fn(),
+  })),
 }));

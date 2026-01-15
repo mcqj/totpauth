@@ -1,4 +1,5 @@
 import { render } from '@testing-library/react-native';
+import { FoldersProvider } from '../contexts/FoldersContext';
 import { CredentialsProvider } from '../contexts/CredentialsContext';
 import { ToastProvider } from '../contexts/ToastContext';
 import ManualEntry from '../components/ManualEntry';
@@ -11,11 +12,13 @@ describe('ManualEntry initial prop updates', () => {
     const initialB = { accountName: 'bob@example.com', issuer: 'Other', secret: 'JBSWY3DPEHPK3PXA' };
 
     const { getByPlaceholderText, rerender } = render(
-      <CredentialsProvider>
-        <ToastProvider>
-          <ManualEntry onSave={onSave} initial={initialA} />
-        </ToastProvider>
-      </CredentialsProvider>
+      <FoldersProvider>
+        <CredentialsProvider>
+          <ToastProvider>
+            <ManualEntry onSave={onSave} initial={initialA} />
+          </ToastProvider>
+        </CredentialsProvider>
+      </FoldersProvider>
     );
 
     const accountInput = getByPlaceholderText('Account Name');
@@ -28,11 +31,13 @@ describe('ManualEntry initial prop updates', () => {
 
     // Rerender with different initial values
     rerender(
-      <CredentialsProvider>
-        <ToastProvider>
-          <ManualEntry onSave={onSave} initial={initialB} />
-        </ToastProvider>
-      </CredentialsProvider>
+      <FoldersProvider>
+        <CredentialsProvider>
+          <ToastProvider>
+            <ManualEntry onSave={onSave} initial={initialB} />
+          </ToastProvider>
+        </CredentialsProvider>
+      </FoldersProvider>
     );
 
     expect(accountInput.props.value).toBe(initialB.accountName);
