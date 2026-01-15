@@ -63,6 +63,7 @@ export default function FolderPicker({ folders, selectedFolderId, onSelect, labe
             <FlatList
               data={folders}
               keyExtractor={(item) => item.id}
+              style={{ maxHeight: 400 }}
               ListHeaderComponent={
                 <Pressable
                   onPress={() => handleSelect(undefined)}
