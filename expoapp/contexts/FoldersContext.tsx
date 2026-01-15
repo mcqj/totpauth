@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode, useEffect, useState, useCallback } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import useFolders from '../hooks/useFolders';
 import { Folder } from '../types/folder';
 
@@ -14,14 +14,24 @@ type FoldersContextValue = {
 const FoldersContext = createContext<FoldersContextValue | undefined>(undefined);
 
 export function FoldersProvider({ children }: { children: ReactNode }) {
-  const { folders: externalFolders, loading, add: addOrig, remove: removeOrig, update: updateOrig, reload } = useFolders();
+  const { folders: externalFolders, loading, add: addOrig, remove: removeOrig, update: updateOrig, reload: reloadOrig } = useFolders();
 
-  // Local copy used for optimistic updates. Keep in sync with externalFolders.
-  const [folders, setFolders] = useState<Folder[]>(externalFolders);
+  // Local copy used for optimistic updates. We'll sync this once after initial load
+  // and when an explicit reload is requested.
+  const [folders, setFolders] = useState<Folder[]>([]);
+  const didInit = useRef(false);
+  const externalFoldersRef = useRef<Folder[]>(externalFolders);
 
   useEffect(() => {
-    setFolders(externalFolders);
+    externalFoldersRef.current = externalFolders;
   }, [externalFolders]);
+
+  useEffect(() => {
+    if (!loading && !didInit.current) {
+      didInit.current = true;
+      setFolders(externalFoldersRef.current);
+    }
+  }, [loading]);
 
   // Optimistic add
   const add = useCallback(async (folder: Omit<Folder, '_key'>) => {
@@ -49,6 +59,12 @@ export function FoldersProvider({ children }: { children: ReactNode }) {
       throw e;
     }
   }, [removeOrig, folders]);
+
+  // Reload wrapper: call the underlying reload and then sync our local copy
+  const reload = useCallback(async () => {
+    await reloadOrig();
+    setFolders(externalFoldersRef.current);
+  }, [reloadOrig]);
 
   const update = useCallback(async (key: string, folder: Omit<Folder, '_key'>) => {
     const before = folders;
