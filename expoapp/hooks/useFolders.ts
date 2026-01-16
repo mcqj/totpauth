@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Folder } from '../types/folder';
-import { loadFolders, addFolder, updateFolder, deleteFolder } from '../utils/folderStore';
+import { addFolder, deleteFolder, loadFolders, updateFolder } from '../utils/folderStore';
 
 export default function useFolders() {
   const [folders, setFolders] = useState<Folder[]>([]);
@@ -38,5 +38,14 @@ export default function useFolders() {
     return newKey;
   }, [load]);
 
-  return { folders, loading, add, remove, update, reload: load };
+  const result = useMemo(() => ({
+    folders,
+    loading,
+    add,
+    remove,
+    update,
+    reload: load,
+  }), [folders, loading, add, remove, update, load]);
+
+  return result;
 }
