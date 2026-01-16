@@ -1,4 +1,4 @@
-import { Text, Pressable } from 'react-native';
+import { Text, Pressable, View } from 'react-native';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 
 // Mock the underlying hook so we can control behavior.
@@ -16,14 +16,15 @@ function TestConsumer() {
   const { folders, add, remove, update, reload, loading } = useFoldersContext();
 
   return (
-    <>
-      <Text testID="loading">{loading ? 'loading' : 'loaded'}</Text>
+    <View>
+      <Text key="loading" testID="loading">{loading ? 'loading' : 'loaded'}</Text>
       {folders.map((f) => (
         <Text key={f._key} testID={`folder-${f._key}`}>
           {f.name}
         </Text>
       ))}
       <Pressable
+        key="add-folder"
         testID="add-folder"
         onPress={() => {
           add({ name: 'NewFolder' }).catch(() => {});
@@ -32,6 +33,7 @@ function TestConsumer() {
         <Text>Add</Text>
       </Pressable>
       <Pressable
+        key="remove-first"
         testID="remove-first"
         onPress={() => {
           if (folders.length > 0) remove(folders[0]._key!).catch(() => {});
@@ -40,6 +42,7 @@ function TestConsumer() {
         <Text>Remove</Text>
       </Pressable>
       <Pressable
+        key="update-first"
         testID="update-first"
         onPress={() => {
           if (folders.length > 0)
@@ -48,10 +51,10 @@ function TestConsumer() {
       >
         <Text>Update</Text>
       </Pressable>
-      <Pressable testID="reload" onPress={() => { reload().catch(() => {}); }}>
+      <Pressable key="reload" testID="reload" onPress={() => { reload().catch(() => {}); }}>
         <Text>Reload</Text>
       </Pressable>
-    </>
+    </View>
   );
 }
 
@@ -153,12 +156,13 @@ describe('FoldersContext', () => {
     test('reload calls underlying reload and syncs from external ref', async () => {
       // We'll track what gets synced by observing state changes
       const mockReload = jest.fn().mockResolvedValue(undefined);
+      const mockAdd = jest.fn().mockResolvedValue('new_folder_key');
       const externalFolders = [{ _key: 'f1', name: 'Folder1' }];
       
       const providerMock = {
         folders: externalFolders,
         loading: false,
-        add: jest.fn(),
+        add: mockAdd,
         remove: jest.fn(),
         update: jest.fn(),
         reload: mockReload,
