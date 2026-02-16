@@ -10,7 +10,7 @@ export function normalizeLabel(raw: string): string {
 
 /**
  * Validate a label (account name or issuer).
- * Allowed characters: letters, numbers, space, underscore.
+ * Allowed characters: letters, numbers, space, underscore, hyphen, @, quotes.
  */
 export function validateLabel(raw: string, opts?: { required?: boolean; maxLength?: number }): LabelValidationResult {
   const errors: string[] = [];
@@ -23,8 +23,8 @@ export function validateLabel(raw: string, opts?: { required?: boolean; maxLengt
   }
 
   if (normalized) {
-    const ok = /^[A-Za-z0-9 _@]+$/.test(normalized);
-    if (!ok) errors.push('Only letters, numbers, spaces and underscore are allowed.');
+    const ok = /^[A-Za-z0-9 _\-@"']+$/.test(normalized);
+    if (!ok) errors.push('Only letters, numbers, spaces, underscores, hyphens, @, and quotes are allowed.');
     if (normalized.length > maxLength) errors.push(`Too long; max ${maxLength} characters.`);
   }
 

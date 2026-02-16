@@ -22,12 +22,15 @@ export function parseTotpUri(uri: string): ParsedTotpCredential | null {
     if (label.includes(':')) {
       [issuer, accountName] = label.split(':');
     }
+    // URL-decode the label parts
+    if (issuer) issuer = decodeURIComponent(issuer);
+    accountName = decodeURIComponent(accountName);
     // Parse query params
     const params = Object.fromEntries(new URLSearchParams(queryString));
     const secret = params['secret'];
     if (!secret) return null;
     // Prefer issuer from query param
-    if (params['issuer']) issuer = params['issuer'];
+    if (params['issuer']) issuer = decodeURIComponent(params['issuer']);
     return { secret, issuer, accountName };
   } catch {
     return null;
