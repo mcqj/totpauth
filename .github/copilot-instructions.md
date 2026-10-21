@@ -57,7 +57,7 @@ This is a secure React Native Expo app for generating Time-based One-Time Passwo
 
 ## Technology Stack
 
-- **Framework**: React Native with Expo-managed workflow (v53.x)
+- **Framework**: React Native with Expo-managed workflow (v58.x)
 - **Language**: TypeScript
 - **Navigation**: expo-router (file-based routing)
 - **Styling**: nativewind (TailwindCSS utility classes) - DO NOT use StyleSheet.create
@@ -73,6 +73,7 @@ This is a secure React Native Expo app for generating Time-based One-Time Passwo
 - Use React 19 conventions: **DO NOT** import React in component files
 - **DO NOT** use `React.FC` - use regular function declarations
 - Prefer functional components with hooks (useState, useEffect, etc.)
+- For a value computed once for initial state, pass an initializer function to `useState` (for example, `useState(createInitialValue)`), rather than calling it (`useState(createInitialValue())`). React does not rerun the initializer on ordinary re-renders; keep it safe to call twice because Strict Mode may invoke it twice in development. Use an effect or timer to keep time-varying state current after initialization.
 - Use TypeScript for all new files
 - Follow existing prop types and interfaces
 - All import statements should be at the beginning of files before any code

@@ -27,7 +27,7 @@ function TestConsumer() {
         key="add-folder"
         testID="add-folder"
         onPress={() => {
-          add({ name: 'NewFolder' }).catch(() => {});
+          add({ id: 'new-folder', name: 'NewFolder' }).catch(() => {});
         }}
       >
         <Text>Add</Text>
@@ -46,7 +46,7 @@ function TestConsumer() {
         testID="update-first"
         onPress={() => {
           if (folders.length > 0)
-            update(folders[0]._key!, { name: 'Updated' }).catch(() => {});
+            update(folders[0]._key!, { id: folders[0].id, name: 'Updated' }).catch(() => {});
         }}
       >
         <Text>Update</Text>
@@ -66,8 +66,8 @@ describe('FoldersContext', () => {
   describe('initialization and synchronization', () => {
     test('initializes folders from hook after loading completes', async () => {
       const externalFolders = Object.freeze([
-        { _key: 'f1', name: 'Folder1' },
-        { _key: 'f2', name: 'Folder2' },
+        { _key: 'f1', id: 'f1', name: 'Folder1' },
+        { _key: 'f2', id: 'f2', name: 'Folder2' },
       ]);
       
       // Start with loading=true
@@ -269,7 +269,7 @@ describe('FoldersContext', () => {
         expect(queryByText('NewFolder')).toBeTruthy();
       });
 
-      expect(mockAdd).toHaveBeenCalledWith({ name: 'NewFolder' });
+      expect(mockAdd).toHaveBeenCalledWith({ id: 'new-folder', name: 'NewFolder' });
     });
 
     test('optimistically removes folder and keeps removed on success', async () => {

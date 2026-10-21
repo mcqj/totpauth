@@ -31,22 +31,18 @@ describe('ManualEntry initial prop updates', () => {
       <ManualEntry onSave={onSave} initial={initialA} />
     );
 
-    const accountInput = getByPlaceholderText('Account Name');
-    const issuerInput = getByPlaceholderText('Issuer (optional)');
-    const secretInput = getByPlaceholderText('Secret');
-
-    expect(accountInput.props.value).toBe(initialA.accountName);
-    expect(issuerInput.props.value).toBe(initialA.issuer);
-    expect(secretInput.props.value).toBe(initialA.secret);
+    expect(getByPlaceholderText('Account Name').props.value).toBe(initialA.accountName);
+    expect(getByPlaceholderText('Issuer (optional)').props.value).toBe(initialA.issuer);
+    expect(getByPlaceholderText('Secret').props.value).toBe(initialA.secret);
 
     // Rerender with different initial values
     rerender(
       <ManualEntry onSave={onSave} initial={initialB} />
     );
 
-    expect(accountInput.props.value).toBe(initialB.accountName);
-    expect(issuerInput.props.value).toBe(initialB.issuer);
+    expect(getByPlaceholderText('Account Name').props.value).toBe(initialB.accountName);
+    expect(getByPlaceholderText('Issuer (optional)').props.value).toBe(initialB.issuer);
     // secret input should also update
-    expect(secretInput.props.value).toBe(initialB.secret);
+    expect(getByPlaceholderText('Secret').props.value).toBe(initialB.secret);
   });
 });

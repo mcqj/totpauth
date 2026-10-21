@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { render, act } from '@testing-library/react-native';
 
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 function HookRunner({ onReady, hook }: { onReady: any; hook: () => any }) {
   const api = hook();
   useEffect(() => { onReady(api); }, [api]);

@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode, useState, useCallback, useRef } from 'react';
-import { View, Text, Animated, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, Animated, StyleSheet, TouchableWithoutFeedback, type ColorSchemeName } from 'react-native';
 import { useColorScheme } from '../hooks/useColorScheme';
 
 type ToastOptions = { type?: 'success' | 'error' | 'info'; duration?: number };
@@ -59,7 +59,7 @@ export function useToast() {
   return ctx;
 }
 
-function getToastStyle(type: 'success' | 'error' | 'info', colorScheme: 'light' | 'dark' | null) {
+function getToastStyle(type: 'success' | 'error' | 'info', colorScheme: ColorSchemeName) {
   const isDark = colorScheme === 'dark';
   
   switch (type) {

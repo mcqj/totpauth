@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { TextInput, Button, KeyboardAvoidingView, ScrollView, Platform, Image } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { useToast } from '../contexts/ToastContext';
 import { useFoldersContext } from '../contexts/FoldersContext';
@@ -21,7 +21,11 @@ type Props = {
   allowSecretEdit?: boolean;
 };
 
-export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allowSecretEdit = true }: Props) {
+export default function ManualEntry(props: Props) {
+  return <ManualEntryForm key={JSON.stringify(props.initial ?? null)} {...props} />;
+}
+
+function ManualEntryForm({ onSave, onCancel, initial, saveLabel, allowSecretEdit = true }: Props) {
   const [manualAccountName, setManualAccountName] = useState(initial?.accountName || '');
   const [manualIssuer, setManualIssuer] = useState(initial?.issuer || '');
   const [manualSecret, setManualSecret] = useState(initial?.secret || '');
@@ -35,24 +39,6 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
   const inputBackgroundColor = useThemeColor({}, 'inputBackground');
   const inputBorderColor = useThemeColor({}, 'inputBorder');
   const textColor = useThemeColor({}, 'text');
-
-  useEffect(() => {
-    if (initial) {
-  // When `initial` changes we should update the form values so the
-  // component can be safely reused. Overwriting user-typed values is
-  // acceptable here because a change in `initial` indicates the parent
-  // intends to show a different credential (for example switching into
-  // edit mode for another item). If you want to preserve in-progress
-  // edits instead, use a more specific heuristic (e.g. compare previous
-  // initial values) instead of this simple behavior.
-  setManualAccountName(initial.accountName || '');
-  setManualIssuer(initial.issuer || '');
-  setManualSecret(initial.secret || '');
-  setManualIcon(initial.icon);
-  setManualFolderId(initial.folderId);
-    }
-  }, [initial]);
-
 
   return (
     <KeyboardAvoidingView
@@ -123,7 +109,7 @@ export default function ManualEntry({ onSave, onCancel, initial, saveLabel, allo
                     show('Permission to access media library is required to select an icon.', { type: 'error' });
                     return;
                   }
-                  const res = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsEditing: true, quality: 0.7 });
+                  const res = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: true, quality: 0.7 });
                   if (!res.canceled) {
                     // Note: older expo-image-picker returns an object with `uri` and `cancelled`; newer returns `assets`.
                     // Handle both shapes for compatibility.

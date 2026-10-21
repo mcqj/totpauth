@@ -1,5 +1,5 @@
 import * as SecureStore from 'expo-secure-store';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { Folder } from '../types/folder';
 
 const FOLDERS_STORE = 'totp_folders';

@@ -9,14 +9,13 @@ jest.unmock('../hooks/useCredentials');
 jest.mock('expo-image-picker', () => ({
   requestMediaLibraryPermissionsAsync: jest.fn(async () => ({ status: 'granted' })),
   launchImageLibraryAsync: jest.fn(async () => ({ canceled: false, assets: [{ uri: 'file:///tmp/picked.png' }] })),
-  MediaTypeOptions: { Images: 'Images' },
 }));
 
 jest.mock('expo-image-manipulator');
-jest.mock('expo-file-system');
+jest.mock('expo-file-system/legacy');
 
 import * as ImageManipulator from 'expo-image-manipulator';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { CredentialsProvider, useCredentialsContext } from '../contexts/CredentialsContext';
 import { ToastProvider } from '../contexts/ToastContext';
 

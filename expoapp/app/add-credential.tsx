@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from 'react-native';
 import { useRouter, Stack, useLocalSearchParams } from 'expo-router';
 import { useToast } from '../contexts/ToastContext';
@@ -32,19 +32,7 @@ export default function AddCredentialScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const editingKey = typeof params?.key === 'string' ? params.key : undefined;
-  const [initial, setInitial] = useState<{ accountName?: string; issuer?: string; secret?: string; icon?: string; folderId?: string } | null>(null);
-
-  useEffect(() => {
-    if (editingKey) {
-      const found = credentials.find((c) => c._key === editingKey);
-      if (found) {
-  setInitial({ accountName: found.accountName, issuer: found.issuer, secret: found.secret, icon: found.icon, folderId: found.folderId });
-        // Enter manual edit mode when editing an existing credential
-        setManualMode(true);
-        setShowCamera(false);
-      }
-    }
-  }, [editingKey, credentials]);
+  const initial = credentials.find((credential) => credential._key === editingKey) ?? null;
 
   const onSaveParsed = async (parsed: { accountName: string; issuer?: string; secret: string }) => {
     try {
@@ -75,7 +63,7 @@ export default function AddCredentialScreen() {
         },
       }} />
       <ThemedText style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginTop: 16 }}>{editingKey ? 'Edit Credential' : 'Add Credential'}</ThemedText>
-      {!showCamera && !manualMode ? (
+      {!showCamera && !manualMode && !initial ? (
         <ThemedView style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Button title="Scan QR Code" onPress={() => setShowCamera(true)} />
           <ThemedView style={{ marginTop: 16 }}>
@@ -84,7 +72,7 @@ export default function AddCredentialScreen() {
         </ThemedView>
       ) : showCamera && !scanned ? (
         <CameraScanner onScanned={(d) => handleBarCodeScanned({ data: d })} onCancel={() => { show('Cancelled', { type: 'info' }); router.replace('/credential-list'); }} />
-      ) : manualMode ? (
+      ) : manualMode || initial ? (
         <ManualEntry
           initial={initial || undefined}
           allowSecretEdit={editingKey ? false : true}

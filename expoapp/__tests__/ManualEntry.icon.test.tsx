@@ -26,7 +26,6 @@ jest.mock('expo-image-picker', () => ({
   requestMediaLibraryPermissionsAsync: jest.fn(async () => ({ status: 'granted' })),
   // Newer expo-image-picker returns { canceled: boolean, assets: [{ uri }] }
   launchImageLibraryAsync: jest.fn(async () => ({ canceled: false, assets: [{ uri: 'file:///tmp/picked.png' }] })),
-  MediaTypeOptions: { Images: 'Images' },
 }));
 
 // Mock expo-image-manipulator to return a manipulated URI
@@ -36,7 +35,7 @@ jest.mock('expo-image-manipulator', () => ({
 }));
 
 // Mock expo-file-system to emulate copy and documentDirectory
-jest.mock('expo-file-system', () => ({
+jest.mock('expo-file-system/legacy', () => ({
   documentDirectory: 'file:///app-docs/',
   makeDirectoryAsync: jest.fn(async () => {}),
   copyAsync: jest.fn(async ({ from, to }: any) => {

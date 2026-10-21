@@ -16,7 +16,7 @@ type Props = {
 
 export default function CredentialCard({ credential, onDelete, onEdit }: Props) {
   const [code, setCode] = useState('');
-  const [timeLeft, setTimeLeft] = useState(30 - (Math.floor(Date.now() / 1000) % 30));
+  const [timeLeft, setTimeLeft] = useState(() => 30 - (Math.floor(Date.now() / 1000) % 30));
   
   const borderColor = useThemeColor({}, 'border');
   const editButtonColor = useThemeColor({}, 'editButton');

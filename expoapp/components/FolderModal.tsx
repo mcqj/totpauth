@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Modal, Pressable, TextInput, Image, ScrollView } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -15,9 +15,14 @@ type Props = {
   onCancel: () => void;
 };
 
-export default function FolderModal({ visible, folder, parentFolderId, onSave, onCancel }: Props) {
-  const [name, setName] = useState('');
-  const [avatar, setAvatar] = useState<string | undefined>(undefined);
+export default function FolderModal(props: Props) {
+  const stateKey = JSON.stringify([props.visible, props.folder, props.parentFolderId]);
+  return <FolderModalContent key={stateKey} {...props} />;
+}
+
+function FolderModalContent({ visible, folder, parentFolderId, onSave, onCancel }: Props) {
+  const [name, setName] = useState(folder?.name ?? '');
+  const [avatar, setAvatar] = useState<string | undefined>(folder?.avatar);
   
   const backgroundColor = useThemeColor({}, 'background');
   const borderColor = useThemeColor({}, 'border');
@@ -26,19 +31,9 @@ export default function FolderModal({ visible, folder, parentFolderId, onSave, o
   const buttonColor = useThemeColor({}, 'editButton');
   const pressedBackground = useThemeColor({}, 'pressedBackground');
 
-  useEffect(() => {
-    if (folder) {
-      setName(folder.name);
-      setAvatar(folder.avatar);
-    } else {
-      setName('');
-      setAvatar(undefined);
-    }
-  }, [folder, visible]);
-
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.5,

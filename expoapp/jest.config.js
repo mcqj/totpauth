@@ -1,9 +1,17 @@
+const path = require('node:path');
+
+const expoModulesCore = require.resolve('expo-modules-core', {
+  paths: [path.dirname(require.resolve('expo/package.json'))],
+});
+
 module.exports = {
   preset: 'jest-expo',
   transformIgnorePatterns: [
     "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg)"
   ],
   moduleNameMapper: {
+  '^expo-modules-core$': expoModulesCore,
+  '^expo-file-system/legacy$': '<rootDir>/__mocks__/expo-file-system.js',
   '^expo-router$': '<rootDir>/__mocks__/expo-router.js',
   '^@expo/vector-icons(.*)$': '<rootDir>/__mocks__/@expo-vector-icons.jsx'
   }
