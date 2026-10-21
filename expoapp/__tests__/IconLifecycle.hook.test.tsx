@@ -37,13 +37,18 @@ describe('Icon lifecycle (hook)', () => {
     const api = apiRef as any;
 
     // Add a credential with temp icon
-    await act(async () => { await api.add({ accountName: 'alice', issuer: 'I', secret: 'S', icon: 'file:///app-docs/icons/temp1.jpg' }); });
+    let key = '';
+    await act(async () => { key = await api.add({ accountName: 'alice', issuer: 'I', secret: 'S', icon: 'file:///app-docs/icons/temp1.jpg' }); });
+
+    let secondIssuerKey = '';
+    await act(async () => { secondIssuerKey = await api.add({ accountName: 'alice', issuer: 'Other', secret: 'S2' }); });
+    expect(secondIssuerKey).not.toBe(key);
 
     // Update it
-    await act(async () => { await api.update('totp_alice', { accountName: 'alice2', issuer: 'I', secret: 'S', icon: 'file:///app-docs/icons/temp2.jpg' }); });
+    await act(async () => { key = await api.update(key, { accountName: 'alice2', issuer: 'I', secret: 'S', icon: 'file:///app-docs/icons/temp2.jpg' }); });
 
     // Remove it
-    await act(async () => { await api.remove('totp_alice'); });
+    await act(async () => { await api.remove(key); });
 
   // Assert SecureStore was used to persist and then delete the credential
   const SecureStoreMod = require('expo-secure-store');

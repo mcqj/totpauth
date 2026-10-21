@@ -5,6 +5,14 @@ import { Credential } from '../types/credential';
 
 const KEYS_STORE = 'totp_keys';
 
+function getCredentialKey(credential: Pick<Credential, 'accountName' | 'issuer'>): string {
+  const safeAccountName = credential.accountName.replace(/[^a-zA-Z0-9._-]/g, '_');
+  const issuerKeyPart = credential.issuer
+    ? `_issuer_${Array.from(credential.issuer, (character) => character.codePointAt(0)?.toString(16) ?? '').join('_')}`
+    : '';
+  return `totp_${safeAccountName}${issuerKeyPart}`;
+}
+
 export default function useCredentials() {
   const [credentials, setCredentials] = useState<Credential[]>([]);
   const [loading, setLoading] = useState(true);
@@ -36,10 +44,8 @@ export default function useCredentials() {
   useEffect(() => {
     load();
   }, [load]);
-
   const add = useCallback(async (cred: Omit<Credential, '_key'>) => {
-    const safeAccountName = cred.accountName.replace(/[^a-zA-Z0-9._-]/g, '_');
-    const key = `totp_${safeAccountName}`;
+    const key = getCredentialKey(cred);
     // If the credential includes a picked icon inside the app documentDirectory,
     // move/copy it to a canonical path based on the key to avoid leaving temp files.
     let credToStore: Omit<Credential, '_key'> = { ...cred };
@@ -96,9 +102,7 @@ export default function useCredentials() {
   }, [load]);
 
   const update = useCallback(async (key: string, cred: Omit<Credential, '_key'>) => {
-    // compute new key based on account name
-    const safeAccountName = cred.accountName.replace(/[^a-zA-Z0-9._-]/g, '_');
-    const newKey = `totp_${safeAccountName}`;
+    const newKey = getCredentialKey(cred);
 
     // If there is a new icon and it points to a temp file inside documentDirectory,
     // move it to a canonical path based on the new key to avoid accumulating timestamped files.

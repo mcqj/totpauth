@@ -10,7 +10,8 @@ export function normalizeLabel(raw: string): string {
 
 /**
  * Validate a label (account name or issuer).
- * Allowed characters: letters, numbers, space, underscore, hyphen, @, quotes.
+ * Labels may contain any printable characters so valid authenticator URI labels
+ * such as email addresses, URLs, and international names are preserved.
  */
 export function validateLabel(raw: string, opts?: { required?: boolean; maxLength?: number }): LabelValidationResult {
   const errors: string[] = [];
@@ -23,8 +24,8 @@ export function validateLabel(raw: string, opts?: { required?: boolean; maxLengt
   }
 
   if (normalized) {
-    const ok = /^[A-Za-z0-9 _\-@"']+$/.test(normalized);
-    if (!ok) errors.push('Only letters, numbers, spaces, underscores, hyphens, @, and quotes are allowed.');
+    const hasControlCharacters = /[\u0000-\u001F\u007F-\u009F]/.test(normalized);
+    if (hasControlCharacters) errors.push('Labels cannot contain control characters.');
     if (normalized.length > maxLength) errors.push(`Too long; max ${maxLength} characters.`);
   }
 
